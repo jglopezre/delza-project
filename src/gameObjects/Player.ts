@@ -5,10 +5,19 @@ import DirectionKeys from '../consts/DirectionKeys';
 export default class Player extends Phaser.GameObjects.Container {
   #player!: Phaser.GameObjects.Sprite;
 
-  #lastDirection: DirectionKeys = 'down';
+  #isWalking = false;
+
+  #xPosition: number;
+
+  #yPosition: number;
+
+  readonly #stepSize = 1;
 
   constructor(scene: Phaser.Scene, xPosition: number, yPosition: number) {
     super(scene, xPosition, yPosition);
+
+    this.#xPosition = xPosition;
+    this.#yPosition = yPosition;
 
     this.createPlayerAnimations();
     this.createPlayer();
@@ -70,10 +79,37 @@ export default class Player extends Phaser.GameObjects.Container {
   }
 
   walking(direction: DirectionKeys) {
-    this.#player.play(`walk-to-${direction}`);
+    if (!this.#isWalking) {
+      this.#player.play(`walk-to-${direction}`);
+      this.#isWalking = true;
+    }
+
+    switch (direction) {
+      case 'up':
+        this.#yPosition -= this.#stepSize;
+        this.y = this.#yPosition;
+        break;
+      case 'down':
+        this.#yPosition += this.#stepSize;
+        this.y = this.#yPosition;
+        break;
+      case 'left':
+        this.#xPosition -= this.#stepSize;
+        this.x = this.#xPosition;
+        break;
+      case 'right':
+        this.#xPosition += this.#stepSize;
+        this.x = this.#xPosition;
+        break;
+      default:
+        throw new Error('Invalid direction');
+    }
   }
 
-  stoping() {
-    this.#player.stop();
+  stopping() {
+    if (this.#isWalking) {
+      this.#player.stop();
+      this.#isWalking = false;
+    }
   }
 }
