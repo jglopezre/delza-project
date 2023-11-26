@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import SceneKeys from '../consts/SceneKeys';
-import DevTextureKeys from '../consts/TextureKeys';
+import TextureKeys from '../consts/TextureKeys';
 
 export default class Preloader extends Phaser.Scene {
   constructor() {
@@ -8,9 +8,13 @@ export default class Preloader extends Phaser.Scene {
   }
 
   preload(): void {
-    this.load.spritesheet(DevTextureKeys.PLAYER1, 'assets/sprites/hero-sprite.png', {
+    this.load.spritesheet(TextureKeys.PLAYER1, 'assets/sprites/hero-sprite.png', {
       frameWidth: 16,
-      frameHeight: 16,
+    });
+
+    this.load.spritesheet(TextureKeys.FIELD_OBJECTS_TILES, 'assets/sprites/field-objects-tileset.png', {
+      frameWidth: 16,
+      spacing: 1,
     });
   }
 

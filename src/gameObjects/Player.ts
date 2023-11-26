@@ -79,28 +79,105 @@ export default class Player extends Phaser.GameObjects.Container {
   }
 
   walking(direction: DirectionKeys) {
-    if (!this.#isWalking) {
+    /* if (!this.#isWalking) {
       this.#player.play(`walk-to-${direction}`);
+      this.#isWalking = true;
+    } */
+    const diagonalMovementCoeficient = 0.7;
+
+    if (!this.#isWalking) {
+      const regex = {
+        up: /^up/,
+        down: /^down/,
+        left: /^left/,
+        right: /^right/,
+      };
+
+      if (regex.up.test(direction as string)) {
+        this.#player.play('walk-to-up');
+      } else if (regex.down.test(direction as string)) {
+        this.#player.play('walk-to-down');
+      } else if (regex.left.test(direction as string)) {
+        this.#player.play('walk-to-left');
+      } else if (regex.right.test(direction as string)) {
+        this.#player.play('walk-to-right');
+      }
       this.#isWalking = true;
     }
 
     switch (direction) {
+      case null:
+        this.stopping();
+        break;
+
       case 'up':
         this.#yPosition -= this.#stepSize;
         this.y = this.#yPosition;
         break;
+      case 'up-left':
+        this.#xPosition -= this.#stepSize * diagonalMovementCoeficient;
+        this.x = this.#xPosition;
+        this.#yPosition -= this.#stepSize * diagonalMovementCoeficient;
+        this.y = this.#yPosition;
+        break;
+      case 'up-right':
+        this.#xPosition += this.#stepSize * diagonalMovementCoeficient;
+        this.x = this.#xPosition;
+        this.#yPosition -= this.#stepSize * diagonalMovementCoeficient;
+        this.y = this.#yPosition;
+        break;
+
       case 'down':
         this.#yPosition += this.#stepSize;
         this.y = this.#yPosition;
         break;
+      case 'down-left':
+        this.#xPosition -= this.#stepSize * diagonalMovementCoeficient;
+        this.x = this.#xPosition;
+        this.#yPosition += this.#stepSize * diagonalMovementCoeficient;
+        this.y = this.#yPosition;
+        break;
+      case 'down-right':
+        this.#xPosition += this.#stepSize * diagonalMovementCoeficient;
+        this.x = this.#xPosition;
+        this.#yPosition += this.#stepSize * diagonalMovementCoeficient;
+        this.y = this.#yPosition;
+        break;
+
       case 'left':
         this.#xPosition -= this.#stepSize;
         this.x = this.#xPosition;
         break;
+      case 'left-up':
+        this.#xPosition -= this.#stepSize * diagonalMovementCoeficient;
+        this.x = this.#xPosition;
+        this.#yPosition -= this.#stepSize * diagonalMovementCoeficient;
+        this.y = this.#yPosition;
+        break;
+      case 'left-down':
+        this.#xPosition -= this.#stepSize * diagonalMovementCoeficient;
+        this.x = this.#xPosition;
+        this.#yPosition += this.#stepSize * diagonalMovementCoeficient;
+        this.y = this.#yPosition;
+        break;
+
       case 'right':
         this.#xPosition += this.#stepSize;
         this.x = this.#xPosition;
         break;
+      case 'right-up':
+        this.#xPosition += this.#stepSize * diagonalMovementCoeficient;
+        this.x = this.#xPosition;
+        this.#yPosition -= this.#stepSize * diagonalMovementCoeficient;
+        this.y = this.#yPosition;
+        break;
+      case 'right-down':
+        this.#xPosition += this.#stepSize * diagonalMovementCoeficient;
+        this.x = this.#xPosition;
+        this.#yPosition += this.#stepSize * diagonalMovementCoeficient;
+        this.y = this.#yPosition;
+        break;
+
       default:
         throw new Error('Invalid direction');
     }
