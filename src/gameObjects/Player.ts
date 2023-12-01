@@ -2,33 +2,71 @@ import Phaser from 'phaser';
 import TextureKeys from '../consts/TextureKeys';
 import DirectionKeys from '../consts/DirectionKeys';
 
+/**
+ * Generate a player hero in the scene
+ * @class - Player
+ */
 export default class Player extends Phaser.GameObjects.Container {
   #player!: Phaser.GameObjects.Sprite;
 
-  #isWalking = false;
+  #playerBody?: Phaser.Physics.Arcade.Body;
 
-  #xPosition: number;
+  #walkToDirection: DirectionKeys = null;
 
-  #yPosition: number;
+  readonly #xOriginPosition: number;
 
-  readonly #stepSize = 1;
+  readonly #yOriginPosition: number;
 
+  /**
+   * Size in pixels that use player to move over the screen in each frame actualization
+   * @type {number}
+   */
+  #playerVelocity = 65;
+
+  #playerVelocityDiagonal = this.#playerVelocity * 0.7;
+
+  /**
+   * @param {Phaser.Scene} scene - Receives an scene where this player will belong
+   * @param {number} xPosition - Position in X axis where player will be drawed.
+   * @param {number} yPosition - Position in Y axis where player will be drawed.
+   */
   constructor(scene: Phaser.Scene, xPosition: number, yPosition: number) {
     super(scene, xPosition, yPosition);
 
-    this.#xPosition = xPosition;
-    this.#yPosition = yPosition;
+    this.#xOriginPosition = xPosition;
+    this.#yOriginPosition = yPosition;
 
     this.createPlayerAnimations();
     this.createPlayer();
 
-    /*
-    scene.physics.add.existing(this);
+    this.setSize(this.#player.width, this.#player.height);
 
-    const body = this.body as Phaser.Physics.Arcade.Body;
-    body.setSize(this.#player.width * 0.5, this.#player.height * 0.7);
-    body.setOffset(this.#player.width * -0.3, this.#player.height + 15);
-     */
+    this.#enablePhysicsonPlayer();
+
+    this.scene.add.existing(this);
+  }
+
+  get originPosition() {
+    return {
+      x: this.#xOriginPosition,
+      y: this.#yOriginPosition,
+    };
+  }
+
+  get stepVelocity() {
+    return this.#playerVelocity;
+  }
+
+  set stepVelocity(value: number) {
+    this.#playerVelocity = value;
+  }
+
+  #enablePhysicsonPlayer() {
+    this.scene.physics.add.existing(this);
+    this.#playerBody = this.body as Phaser.Physics.Arcade.Body;
+    this.#playerBody.setSize(this.#player.width - 6, this.#player.height - 9);
+    this.#playerBody.setOffset(3, 9);
+    this.#playerBody.setCollideWorldBounds(true);
   }
 
   createPlayerAnimations() {
@@ -74,18 +112,36 @@ export default class Player extends Phaser.GameObjects.Container {
   }
 
   createPlayer() {
-    this.#player = this.scene.add.sprite(0, 0, TextureKeys.PLAYER1).setOrigin(0.5, 1);
+    this.#player = this.scene.add.sprite(0, 0, TextureKeys.PLAYER1);
     this.add(this.#player);
   }
 
+  /**
+   * Moves player over the screen every frame according to sizeStep member,
+   * @param {DirectionKeys} direction - Direction that player have to move, refreshed every frame.
+   */
   walking(direction: DirectionKeys) {
-    /* if (!this.#isWalking) {
-      this.#player.play(`walk-to-${direction}`);
-      this.#isWalking = true;
-    } */
-    const diagonalMovementCoeficient = 0.7;
+    if (direction !== this.#walkToDirection) {
+      const regex = {
+        up: /^up/,
+        down: /^down/,
+        left: /^left/,
+        right: /^right/,
+      };
 
-    if (!this.#isWalking) {
+      if (regex.up.test(direction as string)) {
+        this.#player.play('walk-to-up');
+      } else if (regex.down.test(direction as string)) {
+        this.#player.play('walk-to-down');
+      } else if (regex.left.test(direction as string)) {
+        this.#player.play('walk-to-left');
+      } else if (regex.right.test(direction as string)) {
+        this.#player.play('walk-to-right');
+      }
+      this.#walkToDirection = direction;
+    }
+
+    /* if (!this.#walkToDirection) {
       const regex = {
         up: /^up/,
         down: /^down/,
@@ -103,7 +159,7 @@ export default class Player extends Phaser.GameObjects.Container {
         this.#player.play('walk-to-right');
       }
       this.#isWalking = true;
-    }
+    } */
 
     switch (direction) {
       case null:
@@ -111,71 +167,55 @@ export default class Player extends Phaser.GameObjects.Container {
         break;
 
       case 'up':
-        this.#yPosition -= this.#stepSize;
-        this.y = this.#yPosition;
+        this.#playerBody?.setVelocityX(0);
+        this.#playerBody?.setVelocityY(-this.#playerVelocity);
         break;
       case 'up-left':
-        this.#xPosition -= this.#stepSize * diagonalMovementCoeficient;
-        this.x = this.#xPosition;
-        this.#yPosition -= this.#stepSize * diagonalMovementCoeficient;
-        this.y = this.#yPosition;
+        this.#playerBody?.setVelocityX(-this.#playerVelocityDiagonal);
+        this.#playerBody?.setVelocityY(-this.#playerVelocityDiagonal);
         break;
       case 'up-right':
-        this.#xPosition += this.#stepSize * diagonalMovementCoeficient;
-        this.x = this.#xPosition;
-        this.#yPosition -= this.#stepSize * diagonalMovementCoeficient;
-        this.y = this.#yPosition;
+        this.#playerBody?.setVelocityX(this.#playerVelocityDiagonal);
+        this.#playerBody?.setVelocityY(-this.#playerVelocityDiagonal);
         break;
 
       case 'down':
-        this.#yPosition += this.#stepSize;
-        this.y = this.#yPosition;
+        this.#playerBody?.setVelocityX(0);
+        this.#playerBody?.setVelocityY(this.#playerVelocity);
         break;
       case 'down-left':
-        this.#xPosition -= this.#stepSize * diagonalMovementCoeficient;
-        this.x = this.#xPosition;
-        this.#yPosition += this.#stepSize * diagonalMovementCoeficient;
-        this.y = this.#yPosition;
+        this.#playerBody?.setVelocityX(-this.#playerVelocityDiagonal);
+        this.#playerBody?.setVelocityY(this.#playerVelocityDiagonal);
         break;
       case 'down-right':
-        this.#xPosition += this.#stepSize * diagonalMovementCoeficient;
-        this.x = this.#xPosition;
-        this.#yPosition += this.#stepSize * diagonalMovementCoeficient;
-        this.y = this.#yPosition;
+        this.#playerBody?.setVelocityX(this.#playerVelocityDiagonal);
+        this.#playerBody?.setVelocityY(this.#playerVelocityDiagonal);
         break;
 
       case 'left':
-        this.#xPosition -= this.#stepSize;
-        this.x = this.#xPosition;
+        this.#playerBody?.setVelocityX(-this.#playerVelocity);
+        this.#playerBody?.setVelocityY(0);
         break;
       case 'left-up':
-        this.#xPosition -= this.#stepSize * diagonalMovementCoeficient;
-        this.x = this.#xPosition;
-        this.#yPosition -= this.#stepSize * diagonalMovementCoeficient;
-        this.y = this.#yPosition;
+        this.#playerBody?.setVelocityX(-this.#playerVelocityDiagonal);
+        this.#playerBody?.setVelocityY(-this.#playerVelocityDiagonal);
         break;
       case 'left-down':
-        this.#xPosition -= this.#stepSize * diagonalMovementCoeficient;
-        this.x = this.#xPosition;
-        this.#yPosition += this.#stepSize * diagonalMovementCoeficient;
-        this.y = this.#yPosition;
+        this.#playerBody?.setVelocityX(-this.#playerVelocityDiagonal);
+        this.#playerBody?.setVelocityY(this.#playerVelocityDiagonal);
         break;
 
       case 'right':
-        this.#xPosition += this.#stepSize;
-        this.x = this.#xPosition;
+        this.#playerBody?.setVelocityX(this.#playerVelocity);
+        this.#playerBody?.setVelocityY(0);
         break;
       case 'right-up':
-        this.#xPosition += this.#stepSize * diagonalMovementCoeficient;
-        this.x = this.#xPosition;
-        this.#yPosition -= this.#stepSize * diagonalMovementCoeficient;
-        this.y = this.#yPosition;
+        this.#playerBody?.setVelocityX(this.#playerVelocityDiagonal);
+        this.#playerBody?.setVelocityY(-this.#playerVelocityDiagonal);
         break;
       case 'right-down':
-        this.#xPosition += this.#stepSize * diagonalMovementCoeficient;
-        this.x = this.#xPosition;
-        this.#yPosition += this.#stepSize * diagonalMovementCoeficient;
-        this.y = this.#yPosition;
+        this.#playerBody?.setVelocityX(this.#playerVelocityDiagonal);
+        this.#playerBody?.setVelocityY(this.#playerVelocityDiagonal);
         break;
 
       default:
@@ -184,9 +224,11 @@ export default class Player extends Phaser.GameObjects.Container {
   }
 
   stopping() {
-    if (this.#isWalking) {
+    this.#playerBody?.setVelocity(0);
+    this.#player.stop();
+    /* if (this.#isWalking) {
+      this.#playerBody?.setVelocity(0);
       this.#player.stop();
-      this.#isWalking = false;
-    }
+    } */
   }
 }

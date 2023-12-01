@@ -1,86 +1,81 @@
 import Phaser from 'phaser';
-import Player from '../gameObjects/Player';
 import DirectionKeys from '../consts/DirectionKeys';
 
 class KeyBoardInputs {
+
+  static #cursorPressingControl: DirectionKeys = null;
+
+  static #direction: DirectionKeys = null;
+
+
+  static #cursors: Phaser.Types.Input.Keyboard.CursorKeys | undefined;
+
+  static #actions: object | undefined;
+
   static createPlayerInputs(scene: Phaser.Scene) {
-    const cursors = scene.input.keyboard?.createCursorKeys();
-    const actions = scene.input.keyboard?.addKeys({
+    this.#cursors = scene.input.keyboard?.createCursorKeys();
+    this.#actions = scene.input.keyboard?.addKeys({
       attack: Phaser.Input.Keyboard.KeyCodes.A,
       item: Phaser.Input.Keyboard.KeyCodes.S,
     });
-    return { cursors, actions };
   }
 
-  static PlayerMoveOnKeyboardPressing(
-    cursors: Phaser.Types.Input.Keyboard.CursorKeys | undefined,
-  ): DirectionKeys {
-    let direction: DirectionKeys = null;
-    let cursorPressingControl: DirectionKeys = null;
-    let isFirstDetection = false;
+  static PlayerMoveOnKeyboardPressing(): DirectionKeys {
     // first key pressin detection
-
-    if (!isFirstDetection) {
-      if (cursors?.left.isDown) {
-        cursorPressingControl = 'left';
-        isFirstDetection = true;
-      } else if (cursors?.right.isDown) {
-        cursorPressingControl = 'right';
-        isFirstDetection = true;
-      } else if (cursors?.up.isDown) {
-        cursorPressingControl = 'up';
-        isFirstDetection = true;
-      } else if (cursors?.down.isDown) {
-        cursorPressingControl = 'down';
-        isFirstDetection = true;
-      }
+    if (this.#cursors?.left.isDown && this.#cursors.up.isUp && this.#cursors.down.isUp) {
+      this.#cursorPressingControl = 'left';
+    } else if (this.#cursors?.right.isDown && this.#cursors.up.isUp && this.#cursors.down.isUp) {
+      this.#cursorPressingControl = 'right';
+    } else if (this.#cursors?.up.isDown && this.#cursors.right.isUp && this.#cursors.left.isUp) {
+      this.#cursorPressingControl = 'up';
+    } else if (this.#cursors?.down.isDown && this.#cursors.right.isUp && this.#cursors.left.isUp) {
+      this.#cursorPressingControl = 'down';
     }
 
     // up walking direction
-    if (cursors?.up.isDown && cursorPressingControl === 'up') {
-      if (cursors.left.isDown) {
-        direction = 'up-left';
-      } else if (cursors.right.isDown) {
-        direction = 'up-right';
+    if (this.#cursors?.up.isDown && this.#cursorPressingControl === 'up') {
+      if (this.#cursors.left.isDown) {
+        this.#direction = 'up-left';
+      } else if (this.#cursors.right.isDown) {
+        this.#direction = 'up-right';
       } else {
-        direction = 'up';
+        this.#direction = 'up';
       }
-    } else if (cursors?.down.isDown && cursorPressingControl === 'down') {
-      if (cursors.left.isDown) {
-        direction = 'down-left';
-      } else if (cursors.right.isDown) {
-        direction = 'down-right';
+    } else if (this.#cursors?.down.isDown && this.#cursorPressingControl === 'down') {
+      if (this.#cursors.left.isDown) {
+        this.#direction = 'down-left';
+      } else if (this.#cursors.right.isDown) {
+        this.#direction = 'down-right';
       } else {
-        direction = 'down';
+        this.#direction = 'down';
       }
-    } else if (cursors?.left.isDown && cursorPressingControl === 'left') {
-      if (cursors.up.isDown) {
-        direction = 'left-up';
-      } else if (cursors.down.isDown) {
-        direction = 'left-down';
+    } else if (this.#cursors?.left.isDown && this.#cursorPressingControl === 'left') {
+      if (this.#cursors.up.isDown) {
+        this.#direction = 'left-up';
+      } else if (this.#cursors.down.isDown) {
+        this.#direction = 'left-down';
       } else {
-        direction = 'left';
+        this.#direction = 'left';
       }
-    } else if (cursors?.right.isDown && cursorPressingControl === 'right') {
-      if (cursors.up.isDown) {
-        direction = 'right-up';
-      } else if (cursors.down.isDown) {
-        direction = 'right-down';
+    } else if (this.#cursors?.right.isDown && this.#cursorPressingControl === 'right') {
+      if (this.#cursors.up.isDown) {
+        this.#direction = 'right-up';
+      } else if (this.#cursors.down.isDown) {
+        this.#direction = 'right-down';
       } else {
-        direction = 'right';
+        this.#direction = 'right';
       }
-    } else if (cursors?.down.isUp && cursors.up.isUp && cursors.left.isUp && cursors.right.isUp) {
-      direction = null;
-      cursorPressingControl = null;
-      isFirstDetection = false;
+    } else if (
+      this.#cursors?.down.isUp
+      && this.#cursors.up.isUp
+      && this.#cursors.left.isUp
+      && this.#cursors.right.isUp
+    ) {
+      this.#direction = null;
+      this.#cursorPressingControl = null;
     }
 
-    /* if (cursors?.left.isDown) player.walking('left');
-    else if (cursors?.right.isDown) player.walking('right');
-    else if (cursors?.up.isDown) player.walking('up');
-    else if (cursors?.down.isDown) player.walking('down');
-    else player.stopping(); */
-    return direction;
+    return this.#direction;
   }
 }
 

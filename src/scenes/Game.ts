@@ -2,7 +2,8 @@ import Phaser from 'phaser';
 import SceneKeys from '../consts/SceneKeys';
 import Player from '../gameObjects/Player';
 import KeyBoardInputs from '../inputs/KeyboardInputs';
-import Obstacle from '../gameObjects/Obstacle';
+import EnvironmentScene from '../consts/EnvironmentScene';
+import StageMaker from '../stages/StageMaker';
 
 export default class Game extends Phaser.Scene {
   #player!: Player;
@@ -14,39 +15,29 @@ export default class Game extends Phaser.Scene {
   }
 
   create(): void {
-    const { cursors } = KeyBoardInputs.createPlayerInputs(this);
-    this.#cursors = cursors;
+    KeyBoardInputs.createPlayerInputs(this);
 
-    this.#player = new Player(this, 20, 20);
-    this.add.existing(this.#player);
+    this.physics.world.setBounds(0, 0, this.scale.width, this.scale.height - 32);
+    this.physics.world.setBoundsCollision(true, true, true, true);
 
-    const threes = [
-      new Obstacle(this, 'rock', 184, 134),
-      new Obstacle(this, 'tree', 168, 134),
-      new Obstacle(this, 'tree', 152, 134),
-      new Obstacle(this, 'tree', 136, 134),
-      new Obstacle(this, 'tree', 120, 134),
-      new Obstacle(this, 'tree', 104, 134),
-      new Obstacle(this, 'rock', 184, 150),
-      new Obstacle(this, 'tree', 168, 150),
-      new Obstacle(this, 'tree', 152, 150),
-      new Obstacle(this, 'tree', 136, 150),
-      new Obstacle(this, 'knight', 120, 150),
-      new Obstacle(this, 'tree', 104, 150),
-      new Obstacle(this, 'rock', 184, 166),
-      new Obstacle(this, 'tree', 168, 166),
-      new Obstacle(this, 'tree', 152, 166),
-      new Obstacle(this, 'tree', 136, 166),
-      new Obstacle(this, 'tree', 120, 166),
-      new Obstacle(this, 'tree', 104, 166),
-    ];
-    threes.forEach((three) => {
-      this.add.existing(three);
-    });
+    const stage = new StageMaker(this, EnvironmentScene.desert);
+
+    const bounds = stage.getBoundsObjectsList;
+    const obstacles = stage.getObstaclesObjectsList;
+    const worldTiles = this.physics.add.staticGroup();
+    worldTiles.addMultiple(bounds);
+    worldTiles.addMultiple(obstacles);
+
+    console.log(bounds);
+    console.log(obstacles);
+
+    this.#player = new Player(this, 100, 100);
+
+    this.physics.add.collider(this.#player, worldTiles);
   }
 
-  update(_time: number, _deltaTime: number): void {
-    const direction = KeyBoardInputs.PlayerMoveOnKeyboardPressing(this.#cursors);
-    this.#player.walking(direction);
+  // _time: number, _deltaTime: number
+  update(): void {
+    this.#player.walking(KeyBoardInputs.PlayerMoveOnKeyboardPressing());
   }
 }

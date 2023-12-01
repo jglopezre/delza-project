@@ -12,7 +12,7 @@ export default class Preloader extends Phaser.Scene {
       frameWidth: 16,
     });
 
-    this.load.spritesheet(TextureKeys.FIELD_OBJECTS_TILES, 'assets/sprites/field-objects-tileset.png', {
+    this.load.spritesheet(TextureKeys.FIELD_OBJECTS_TILES, 'assets/sprites/field-tileset.png', {
       frameWidth: 16,
       spacing: 1,
     });
