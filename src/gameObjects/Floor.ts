@@ -1,5 +1,6 @@
+/* eslint-disable max-len */
 import Phaser from 'phaser';
-import TextureKeys from '../consts/TextureKeys';
+import { EnvironmentSceneKeys, FloorKeys, TextureKeys } from '../consts';
 import { EnvironmentType, FloorType } from '../types';
 
 /**
@@ -24,8 +25,8 @@ class Floor extends Phaser.GameObjects.Image {
    */
   constructor(
     scene: Phaser.Scene,
-    environment: EnvironmentType,
-    floor: FloorType,
+    environment: EnvironmentSceneKeys,
+    floor: FloorKeys,
     xPosition: number,
     yPosition: number,
     tileId?: number,
@@ -56,33 +57,33 @@ class Floor extends Phaser.GameObjects.Image {
    */
   static #textureSelector(floor: FloorType, environment: EnvironmentType): number {
     switch (true) {
-      case environment === 'desert' && floor === 'solid': return 0;
-      case environment === 'desert' && floor === 'left-behind-corner-island': return 7;
-      case environment === 'desert' && floor === 'right-behind-corner-island': return 8;
-      case environment === 'desert' && floor === 'sand': return 18;
-      case environment === 'desert' && floor === 'left-front-corner-island': return 25;
-      case environment === 'desert' && floor === 'right-front-corner-island': return 26;
+      case environment === EnvironmentSceneKeys.desert && floor === FloorKeys.solid: return 0;
+      case environment === EnvironmentSceneKeys.desert && floor === FloorKeys.lbcIsland: return 7;
+      case environment === EnvironmentSceneKeys.desert && floor === FloorKeys.rbcIsland: return 8;
+      case environment === EnvironmentSceneKeys.desert && floor === FloorKeys.sand: return 18;
+      case environment === EnvironmentSceneKeys.desert && floor === FloorKeys.lfcIsland: return 25;
+      case environment === EnvironmentSceneKeys.desert && floor === FloorKeys.rfcIsland: return 26;
 
-      case environment === 'forest' && floor === 'solid': return 9;
-      case environment === 'forest' && floor === 'left-behind-corner-island': return 16;
-      case environment === 'forest' && floor === 'right-behind-corner-island': return 17;
-      case environment === 'forest' && floor === 'sand': return 27;
-      case environment === 'forest' && floor === 'left-front-corner-island': return 34;
-      case environment === 'forest' && floor === 'right-front-corner-island': return 35;
+      case environment === EnvironmentSceneKeys.forest && floor === FloorKeys.solid: return 9;
+      case environment === EnvironmentSceneKeys.forest && floor === FloorKeys.lbcIsland: return 16;
+      case environment === EnvironmentSceneKeys.forest && floor === FloorKeys.rbcIsland: return 17;
+      case environment === EnvironmentSceneKeys.forest && floor === FloorKeys.sand: return 27;
+      case environment === EnvironmentSceneKeys.forest && floor === FloorKeys.lfcIsland: return 34;
+      case environment === EnvironmentSceneKeys.forest && floor === FloorKeys.rfcIsland: return 35;
 
-      case environment === 'cemetery' && floor === 'solid': return 90;
-      case environment === 'cemetery' && floor === 'left-behind-corner-island': return 97;
-      case environment === 'cemetery' && floor === 'right-behind-corner-island': return 98;
-      case environment === 'cemetery' && floor === 'sand': return 108;
-      case environment === 'cemetery' && floor === 'left-front-corner-island': return 115;
-      case environment === 'cemetery' && floor === 'right-front-corner-island': return 116;
+      case environment === EnvironmentSceneKeys.cemetery && floor === FloorKeys.solid: return 90;
+      case environment === EnvironmentSceneKeys.cemetery && floor === FloorKeys.lbcIsland: return 97;
+      case environment === EnvironmentSceneKeys.cemetery && floor === FloorKeys.rbcIsland: return 98;
+      case environment === EnvironmentSceneKeys.cemetery && floor === FloorKeys.sand: return 108;
+      case environment === EnvironmentSceneKeys.cemetery && floor === FloorKeys.lfcIsland: return 115;
+      case environment === EnvironmentSceneKeys.cemetery && floor === FloorKeys.rfcIsland: return 116;
 
-      case environment === 'cave' && floor === 'solid': return 99;
-      case environment === 'cave' && floor === 'left-behind-corner-island': return 106;
-      case environment === 'cave' && floor === 'right-behind-corner-island': return 107;
-      case environment === 'cave' && floor === 'sand': return 117;
-      case environment === 'cave' && floor === 'left-front-corner-island': return 124;
-      case environment === 'cave' && floor === 'right-front-corner-island': return 125;
+      case environment === EnvironmentSceneKeys.cave && floor === FloorKeys.solid: return 99;
+      case environment === EnvironmentSceneKeys.cave && floor === FloorKeys.lbcIsland: return 106;
+      case environment === EnvironmentSceneKeys.cave && floor === FloorKeys.rbcIsland: return 107;
+      case environment === EnvironmentSceneKeys.cave && floor === FloorKeys.sand: return 117;
+      case environment === EnvironmentSceneKeys.cave && floor === FloorKeys.lfcIsland: return 124;
+      case environment === EnvironmentSceneKeys.cave && floor === FloorKeys.rfcIsland: return 125;
 
       default: return 0;
     }

@@ -1,14 +1,12 @@
 import Phaser from 'phaser';
-import SceneKeys from '../consts/SceneKeys';
+import { SceneKeys, EnvironmentSceneKeys, RockCockroachColor, RockCockroachAnimationKey } from '../consts';
 import Player from '../gameObjects/Player';
 import KeyBoardInputs from '../inputs/KeyboardInputs';
-import EnvironmentScene from '../consts/EnvironmentScene';
 import StageMaker from '../stages/StageMaker';
+import RockCockroach from '../gameObjects/RockCockroach';
 
 export default class Game extends Phaser.Scene {
   #player!: Player;
-
-  #cursors: Phaser.Types.Input.Keyboard.CursorKeys | undefined;
 
   constructor() {
     super(SceneKeys.GAME);
@@ -20,7 +18,7 @@ export default class Game extends Phaser.Scene {
     this.physics.world.setBounds(0, 0, this.scale.width, this.scale.height - 32);
     this.physics.world.setBoundsCollision(true, true, true, true);
 
-    const stage = new StageMaker(this, EnvironmentScene.desert);
+    const stage = new StageMaker(this, EnvironmentSceneKeys.forest);
 
     const bounds = stage.getBoundsObjectsList;
     const obstacles = stage.getObstaclesObjectsList;
@@ -28,6 +26,10 @@ export default class Game extends Phaser.Scene {
     worldTiles.addMultiple(bounds);
     worldTiles.addMultiple(obstacles);
 
+    const enemy = new RockCockroach(this, RockCockroachColor.green, 16 * 5, 16 * 4);
+    const enemy2 = new RockCockroach(this, RockCockroachColor.brown, 16 * 15, 16 * 10);
+    enemy.play(RockCockroachAnimationKey.greenWalktoDown);
+    enemy2.play(RockCockroachAnimationKey.brownWalktoUp);
     console.log(bounds);
     console.log(obstacles);
 

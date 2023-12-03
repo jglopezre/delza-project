@@ -1,6 +1,5 @@
 import Phaser from 'phaser';
-import TextureKeys from '../consts/TextureKeys';
-import DirectionKeys from '../consts/DirectionKeys';
+import { TextureKeys, DirectionKeys} from '../consts';
 
 /**
  * Generate a player hero in the scene
@@ -9,7 +8,7 @@ import DirectionKeys from '../consts/DirectionKeys';
 export default class Player extends Phaser.GameObjects.Container {
   #player!: Phaser.GameObjects.Sprite;
 
-  #playerBody?: Phaser.Physics.Arcade.Body;
+  #playerBody!: Phaser.Physics.Arcade.Body;
 
   #walkToDirection: DirectionKeys = null;
 
@@ -36,8 +35,8 @@ export default class Player extends Phaser.GameObjects.Container {
     this.#xOriginPosition = xPosition;
     this.#yOriginPosition = yPosition;
 
-    this.createPlayerAnimations();
-    this.createPlayer();
+    this.#createPlayerAnimations();
+    this.#createPlayer();
 
     this.setSize(this.#player.width, this.#player.height);
 
@@ -69,7 +68,7 @@ export default class Player extends Phaser.GameObjects.Container {
     this.#playerBody.setCollideWorldBounds(true);
   }
 
-  createPlayerAnimations() {
+  #createPlayerAnimations() {
     this.scene.anims.create({
       key: 'walk-to-up',
       frames: this.scene.anims.generateFrameNumbers(TextureKeys.PLAYER1, {
@@ -111,7 +110,7 @@ export default class Player extends Phaser.GameObjects.Container {
     });
   }
 
-  createPlayer() {
+  #createPlayer() {
     this.#player = this.scene.add.sprite(0, 0, TextureKeys.PLAYER1);
     this.add(this.#player);
   }

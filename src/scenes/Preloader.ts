@@ -1,6 +1,5 @@
 import Phaser from 'phaser';
-import SceneKeys from '../consts/SceneKeys';
-import TextureKeys from '../consts/TextureKeys';
+import { SceneKeys, TextureKeys, JsonKeys } from '../consts';
 
 export default class Preloader extends Phaser.Scene {
   constructor() {
@@ -16,6 +15,12 @@ export default class Preloader extends Phaser.Scene {
       frameWidth: 16,
       spacing: 1,
     });
+
+    this.load.spritesheet(TextureKeys.ROCK_COCKROACH, 'assets/sprites/rock-cockroach.png', {
+      frameWidth: 16,
+    });
+
+    this.load.json(JsonKeys.WORLD_FIELD, 'assets/fieldsData/worldField.json');
   }
 
   create(): void {

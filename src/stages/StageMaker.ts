@@ -1,14 +1,13 @@
-import EnvironmentScene from '../consts/EnvironmentScene';
-import FloorKeys from '../consts/FloorKeys';
-import ObstacleKeys from '../consts/ObstacleKeys';
-import StageBoundObjectKeys from '../consts/StageBoundObjectKeys';
+import {
+  EnvironmentSceneKeys, FloorKeys, JsonKeys, ObstacleKeys, StageBoundObjectKeys,
+} from '../consts';
 import Floor from '../gameObjects/Floor';
 import Obstacle from '../gameObjects/Obstacle';
 import StageBoundObject from '../gameObjects/StageBound';
-import { EnvironmentType } from '../types';
+import { StageProps } from '../types';
 
 class StageMaker {
-  readonly #field = {
+  readonly #fieldSyzeByTiles = {
     xMaxTiles: 20,
     yMaxTiles: 12,
   };
@@ -17,7 +16,7 @@ class StageMaker {
 
   #tileSize = 16;
 
-  #stageEnvironmentStyle: EnvironmentType;
+  #stageEnvironmentStyle: EnvironmentSceneKeys;
 
   #floor: Floor[][] = [[]];
 
@@ -25,14 +24,22 @@ class StageMaker {
 
   #obstacles: (Obstacle | null)[][] = [[]];
 
+  #worldField: StageProps[];
+
   constructor(
     scene: Phaser.Scene,
-    stageEnvironmentStyle?: EnvironmentType,
+    stageEnvironmentStyle?: EnvironmentSceneKeys,
   ) {
     this.#scene = scene;
-    this.#stageEnvironmentStyle = stageEnvironmentStyle ?? EnvironmentScene.desert;
+    this.#stageEnvironmentStyle = stageEnvironmentStyle ?? EnvironmentSceneKeys.desert;
+    this.#worldField = this.#scene.cache.json.get(JsonKeys.WORLD_FIELD);
+    console.log(this.#worldField);
 
     this.decodeStage();
+  }
+
+  get fieldSizeByTiles() {
+    return this.#fieldSyzeByTiles;
   }
 
   #assemblingFloorRow(tileRow: Array<number>, rowNumber: number, tileId?: number): Array<Floor> {
@@ -133,7 +140,6 @@ class StageMaker {
             StageBoundObjectKeys.lbcRock,
             xPosition,
             yPosition,
-            true,
             tileId,
           );
 
@@ -145,7 +151,6 @@ class StageMaker {
             StageBoundObjectKeys.bcRock,
             xPosition,
             yPosition,
-            true,
             tileId,
           );
 
@@ -157,7 +162,6 @@ class StageMaker {
             StageBoundObjectKeys.rbcRock,
             xPosition,
             yPosition,
-            true,
             tileId,
           );
 
@@ -169,7 +173,6 @@ class StageMaker {
             StageBoundObjectKeys.lfcRock,
             xPosition,
             yPosition,
-            true,
             tileId,
           );
 
@@ -181,7 +184,6 @@ class StageMaker {
             StageBoundObjectKeys.fcRock,
             xPosition,
             yPosition,
-            true,
             tileId,
           );
 
@@ -193,7 +195,6 @@ class StageMaker {
             StageBoundObjectKeys.rfcRock,
             xPosition,
             yPosition,
-            true,
             tileId,
           );
 
@@ -290,56 +291,7 @@ class StageMaker {
   }
 
   decodeStage() {
-    const stage = {
-      floor: [
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 5, 5, 1, 1, 1, 1, 1],
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 5, 5, 1, 1, 1, 1, 1],
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 5, 5, 5, 5, 5, 1, 1, 1, 1, 1],
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 5, 5, 5, 5, 5, 1, 1, 1, 1, 1],
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 5, 5, 5, 5, 5, 1, 1, 1, 1, 1],
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 5, 5, 1, 1, 1, 1, 1],
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 5, 5, 1, 1, 1, 1, 1],
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 5, 5, 5, 1, 1, 1, 1],
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 5, 5, 1, 1, 1],
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 5, 5, 5, 5, 5],
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 5, 1, 1, 1],
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-      ],
-
-      bounds: [
-        [5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 6, 0, 0, 4, 5, 5, 5, 5],
-        [4, 5, 5, 6, 0, 0, 4, 5, 5, 5, 5, 6, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 4, 5, 5, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 5],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 5],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 1, 2, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 1, 2, 5, 5, 5, 3, 0, 0, 0, 0, 0, 0, 1, 3, 0, 0, 0, 0, 0],
-        [2, 5, 5, 5, 5, 5, 5, 2, 2, 2, 2, 2, 2, 5, 5, 2, 2, 2, 2, 2],
-      ],
-
-      obstacles: [
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 3, 0, 3, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      ],
-    };
-
+    const stage = this.#worldField[0];
     this.#floor = stage.floor.map((row, index) => this.#assemblingFloorRow(row, index));
     console.log(this.#floor);
 

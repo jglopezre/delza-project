@@ -1,5 +1,6 @@
+/* eslint-disable max-len */
 import Phaser from 'phaser';
-import TextureKeys from '../consts/TextureKeys';
+import { TextureKeys, ObstacleKeys, EnvironmentSceneKeys } from '../consts';
 import { EnvironmentType, ObstacleType } from '../types';
 
 /**
@@ -14,8 +15,8 @@ class Obstacle extends Phaser.Physics.Arcade.Image {
   /**
    * @constructor - creates a new Obstacle instance.
    * @param {Phaser.Scene} scene - Scene thet receives the obstacle.
-   * @param {ObstacleType} obstacle - Type of obstacle to put.
-   * @param {EnvironmentType} environment - Receives a string that select environment scene.
+   * @param {ObstacleKeys} obstacle - Type of obstacle to put.
+   * @param {Environment} environment - Receives a string that select environment scene.
    * @param {number} xPosition - Position in X axis to put obstacle.
    * @param {number} yPosition - Position in Y axis to put obstacle.
    * @param {boolean} enablePhysics? - Enable body of the object
@@ -23,8 +24,8 @@ class Obstacle extends Phaser.Physics.Arcade.Image {
    */
   constructor(
     scene: Phaser.Scene,
-    environment: EnvironmentType,
-    obstacle: ObstacleType,
+    environment: EnvironmentSceneKeys,
+    obstacle: ObstacleKeys,
     xPosition: number,
     yPosition: number,
     enablePhysics? : boolean,
@@ -73,25 +74,25 @@ class Obstacle extends Phaser.Physics.Arcade.Image {
    */
   static #textureSelector(obstacle: ObstacleType, environment: EnvironmentType): number {
     switch (true) {
-      case environment === 'desert' && obstacle === 'rock': return 36;
-      case environment === 'desert' && obstacle === 'tree': return 37;
-      case environment === 'desert' && obstacle === 'knight': return 38;
-      case environment === 'desert' && obstacle === 'tomb': return 39;
+      case environment === EnvironmentSceneKeys.desert && obstacle === ObstacleKeys.rock: return 36;
+      case environment === EnvironmentSceneKeys.desert && obstacle === ObstacleKeys.tree: return 37;
+      case environment === EnvironmentSceneKeys.desert && obstacle === ObstacleKeys.knight: return 38;
+      case environment === EnvironmentSceneKeys.desert && obstacle === ObstacleKeys.tomb: return 39;
 
-      case environment === 'forest' && obstacle === 'rock': return 45;
-      case environment === 'forest' && obstacle === 'tree': return 46;
-      case environment === 'forest' && obstacle === 'knight': return 47;
-      case environment === 'forest' && obstacle === 'tomb': return 48;
+      case environment === EnvironmentSceneKeys.forest && obstacle === ObstacleKeys.rock: return 45;
+      case environment === EnvironmentSceneKeys.forest && obstacle === ObstacleKeys.tree: return 46;
+      case environment === EnvironmentSceneKeys.forest && obstacle === ObstacleKeys.knight: return 47;
+      case environment === EnvironmentSceneKeys.forest && obstacle === ObstacleKeys.tomb: return 48;
 
-      case environment === 'cemetery' && obstacle === 'rock': return 126;
-      case environment === 'cemetery' && obstacle === 'tree': return 127;
-      case environment === 'cemetery' && obstacle === 'knight': return 128;
-      case environment === 'cemetery' && obstacle === 'tomb': return 129;
+      case environment === EnvironmentSceneKeys.cemetery && obstacle === ObstacleKeys.rock: return 126;
+      case environment === EnvironmentSceneKeys.cemetery && obstacle === ObstacleKeys.tree: return 127;
+      case environment === EnvironmentSceneKeys.cemetery && obstacle === ObstacleKeys.knight: return 128;
+      case environment === EnvironmentSceneKeys.cemetery && obstacle === ObstacleKeys.tomb: return 129;
 
-      case environment === 'cave' && obstacle === 'rock': return 135;
-      case environment === 'cave' && obstacle === 'tree': return 136;
-      case environment === 'cave' && obstacle === 'knight': return 137;
-      case environment === 'cave' && obstacle === 'tomb': return 138;
+      case environment === EnvironmentSceneKeys.cave && obstacle === ObstacleKeys.rock: return 135;
+      case environment === EnvironmentSceneKeys.cave && obstacle === ObstacleKeys.tree: return 136;
+      case environment === EnvironmentSceneKeys.cave && obstacle === ObstacleKeys.knight: return 137;
+      case environment === EnvironmentSceneKeys.cave && obstacle === ObstacleKeys.tomb: return 138;
 
       default: return 0;
     }

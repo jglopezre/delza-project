@@ -1,12 +1,10 @@
 import Phaser from 'phaser';
-import DirectionKeys from '../consts/DirectionKeys';
+import { DirectionKeys } from '../consts/DirectionKeys';
 
 class KeyBoardInputs {
-
   static #cursorPressingControl: DirectionKeys = null;
 
   static #direction: DirectionKeys = null;
-
 
   static #cursors: Phaser.Types.Input.Keyboard.CursorKeys | undefined;
 
