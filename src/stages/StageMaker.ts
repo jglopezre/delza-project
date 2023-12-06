@@ -1,20 +1,29 @@
 import {
-  EnvironmentSceneKeys, FloorKeys, JsonKeys, ObstacleKeys, StageBoundObjectKeys,
+  EnvironmentSceneKeys,
+  FloorKeys,
+  JsonKeys,
+  ObstacleKeys,
+  RockCockroachAnimationKey,
+  RockCockroachColor,
+  StageBoundObjectKeys,
 } from '../consts';
 import Floor from '../gameObjects/Floor';
 import Obstacle from '../gameObjects/Obstacle';
+import RockCockroach from '../gameObjects/RockCockroach';
 import StageBoundObject from '../gameObjects/StageBound';
 import { StageProps } from '../types';
 
 class StageMaker {
+  private stageId!: number;
+
   readonly #fieldSyzeByTiles = {
     xMaxTiles: 20,
     yMaxTiles: 12,
   };
 
-  #scene: Phaser.Scene;
+  readonly #tileSize = 16;
 
-  #tileSize = 16;
+  #scene: Phaser.Scene;
 
   #stageEnvironmentStyle: EnvironmentSceneKeys;
 
@@ -24,18 +33,21 @@ class StageMaker {
 
   #obstacles: (Obstacle | null)[][] = [[]];
 
+  private enemies: (RockCockroach | null)[][] = [[]];
+
   #worldField: StageProps[];
 
   constructor(
     scene: Phaser.Scene,
-    stageEnvironmentStyle?: EnvironmentSceneKeys,
   ) {
     this.#scene = scene;
-    this.#stageEnvironmentStyle = stageEnvironmentStyle ?? EnvironmentSceneKeys.desert;
-    this.#worldField = this.#scene.cache.json.get(JsonKeys.WORLD_FIELD);
-    console.log(this.#worldField);
 
-    this.decodeStage();
+    this.#stageEnvironmentStyle = EnvironmentSceneKeys.desert;
+
+    // Obtain world field data from cache.
+    this.#worldField = this.#scene.cache.json.get(JsonKeys.WORLD_FIELD);
+
+    this.decodeStage(this.#worldField[0]);
   }
 
   get fieldSizeByTiles() {
@@ -199,7 +211,7 @@ class StageMaker {
           );
 
         default:
-          throw new Error('A valid TileType required, Class: StageMaker, Method: putTile');
+          throw new Error('A valid TileType required, Class: StageMaker, Method: assemblingBoundsRow');
       }
     });
     return row;
@@ -221,7 +233,6 @@ class StageMaker {
             ObstacleKeys.rock,
             xPosition,
             yPosition,
-            true,
             tileId,
           );
 
@@ -233,7 +244,6 @@ class StageMaker {
             ObstacleKeys.tree,
             xPosition,
             yPosition,
-            true,
             tileId,
           );
 
@@ -245,7 +255,6 @@ class StageMaker {
             ObstacleKeys.knight,
             xPosition,
             yPosition,
-            true,
             tileId,
           );
 
@@ -257,12 +266,84 @@ class StageMaker {
             ObstacleKeys.tomb,
             xPosition,
             yPosition,
-            true,
             tileId,
           );
 
         default:
-          throw new Error('A valid TileType required, Class: StageMaker, Method: putTile');
+          throw new Error('A valid TileType required, Class: StageMaker, Method: assemblingObstacleRow');
+      }
+    });
+    return row;
+  }
+
+  private assemblingEnemyRow(tileRow: Array<number>, rowNumber: number) {
+    const row = tileRow.map((tileType, index) => {
+      const xPosition = index * this.#tileSize;
+      const yPosition = rowNumber * this.#tileSize;
+      const generateAnenemy = Phaser.Math.RND.pick([false, true]);
+      if (generateAnenemy) {
+        switch (tileType) {
+          case 0: return null;
+
+          /** Case 1 - RockCockroach - red */
+          case 1:
+            return new RockCockroach(
+              this.#scene,
+              RockCockroachColor.red,
+              xPosition,
+              yPosition,
+            );
+
+          /** Case 2 RockCockroach - blue */
+          case 2:
+            return new RockCockroach(
+              this.#scene,
+              RockCockroachColor.blue,
+              xPosition,
+              yPosition,
+            );
+
+          /** Case 3 RockCockroach - brown */
+          case 3:
+            return new RockCockroach(
+              this.#scene,
+              RockCockroachColor.brown,
+              xPosition,
+              yPosition,
+            );
+
+          /** Case 4 RockCockroach - green */
+          case 4:
+            return new RockCockroach(
+              this.#scene,
+              RockCockroachColor.green,
+              xPosition,
+              yPosition,
+            );
+
+          /** Case 5 RockCockroach - gray */
+          case 5:
+            return new RockCockroach(
+              this.#scene,
+              RockCockroachColor.gray,
+              xPosition,
+              yPosition,
+            ).play(RockCockroachAnimationKey.grayWalktoDown);
+
+          /** Case 6 RockCockroach - black */
+          case 6:
+            return new RockCockroach(
+              this.#scene,
+              RockCockroachColor.black,
+              xPosition,
+              yPosition,
+            ).play(RockCockroachAnimationKey.blackWalktoDown);
+
+          default:
+            throw new Error('A valid Enemy required, Class: StageMaker, Method: assemblingEnemyRow');
+        }
+      } else {
+        return null;
       }
     });
     return row;
@@ -290,8 +371,21 @@ class StageMaker {
     return obstacles;
   }
 
-  decodeStage() {
-    const stage = this.#worldField[0];
+  get getenemiesObjecsList() {
+    const enemies: RockCockroach[] = [];
+
+    this.enemies.forEach((row) => {
+      row.forEach((enemyObject) => {
+        if (enemyObject !== null) enemies.push(enemyObject);
+      });
+    });
+    return enemies;
+  }
+
+  decodeStage(stage: StageProps) {
+    this.#stageEnvironmentStyle = stage.environment as EnvironmentSceneKeys;
+    this.stageId = stage.stageId;
+
     this.#floor = stage.floor.map((row, index) => this.#assemblingFloorRow(row, index));
     console.log(this.#floor);
 
@@ -300,6 +394,9 @@ class StageMaker {
 
     this.#obstacles = stage.obstacles.map((row, index) => this.#assemblingObstacleRow(row, index));
     console.log(this.#obstacles);
+
+    this.enemies = stage.enemies.map((row, index) => this.assemblingEnemyRow(row, index));
+    console.log(this.enemies);
   }
 }
 

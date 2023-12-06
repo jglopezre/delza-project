@@ -7,7 +7,7 @@ export default class Preloader extends Phaser.Scene {
   }
 
   preload(): void {
-    this.load.spritesheet(TextureKeys.PLAYER1, 'assets/sprites/hero-sprite.png', {
+    this.load.spritesheet(TextureKeys.PLAYER1, 'assets/sprites/hero.png', {
       frameWidth: 16,
     });
 

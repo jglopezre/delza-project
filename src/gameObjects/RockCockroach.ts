@@ -3,29 +3,71 @@ import {
   DirectionKeys, RockCockroachAnimationKey, RockCockroachColor, TextureKeys,
 } from '../consts';
 import AutoMovement from '../inputs/AutoMovement';
+import { TextureFrames } from '../types';
 
-type TextureFrames = {
-  up: { key: RockCockroachAnimationKey, start: number, end: number, },
-  down: { key: RockCockroachAnimationKey, start: number, end: number, },
-  left: { key: RockCockroachAnimationKey, start: number, end: number, },
-  right: { key: RockCockroachAnimationKey, start: number, end: number, },
-};
-
+/**
+ * A Rock-Cockroach object for make enemies with automatic movement and Arcade Physics enabled
+ *
+ * @class
+ */
 class RockCockroach extends Phaser.Physics.Arcade.Sprite {
-  readonly spriteId: string;
+  /**
+   * Holds id for this Game Object.
+   *
+   * @private
+   * @readonly
+   */
+  private readonly spriteId: string;
 
-  readonly animationFrameRate:number = 8;
+  /**
+   * Holds animation framerate value.
+   *
+   * @private
+   * @readonly
+   */
 
-  spriteTextureFrames!: TextureFrames;
+  private readonly animationFrameRate:number = 8;
 
-  autoMovement?: AutoMovement;
+  /**
+   * Holds an object with information about frames, and animation key selected by color.
+   *
+   * @private
+   */
+  private spriteTextureFrames!: TextureFrames<RockCockroachAnimationKey>;
 
-  spriteBody!: Phaser.Physics.Arcade.Body;
+  /**
+   * Holds Automovement class instantation object.
+   *
+   * @private
+   */
+  private autoMovement: AutoMovement;
 
-  spriteVelocity: number = 30;
+  /**
+   * Holds sprite body object.
+   *
+   * @private
+   */
+  private spriteBody!: Phaser.Physics.Arcade.Body;
 
-  // #eventEmitterReceptor: Phaser.Events.EventEmitter;
+  /**
+   * Holds velocity value for make sprite body movement.
+   *
+   * @private
+   */
+  private spriteVelocity: number = 30;
 
+  private addAutomovement: boolean;
+
+  /**
+   * Class construtor
+   *
+   * @constructor
+   * @param {Phaser.Scene} scene - Receives a Scene Object
+   * @param {RockCockroachColor} color - Receives color key for make RockCocroach of selected color.
+   * @param {number} xPosition - Position of sprite origin in X axis.
+   * @param {number} yPosition - Position of sprite origin in Y axis.
+   * @param {boolean} addAutoMovement - Enables o disables automovement use.
+   */
   constructor(
     scene: Phaser.Scene,
     color: RockCockroachColor,
@@ -37,18 +79,22 @@ class RockCockroach extends Phaser.Physics.Arcade.Sprite {
 
     this.setOrigin(0);
 
+    this.addAutomovement = addAutoMovement ?? true;
+
+    /** Generates an id adding a key + color + uuid. */
     this.spriteId = `rock-cockroach-${color}-${Phaser.Math.RND.uuid()}`;
 
-    // this.#eventEmitterReceptor = new Phaser.Events.EventEmitter();
     this.#selectTexturesForAnimation(color);
 
     this.#createAnimations();
 
-    this.#enablePhysics();
+    this.play(this.spriteTextureFrames.down.key);
+    this.stop();
 
-    if (addAutoMovement ?? true) {
-      this.autoMovement = new AutoMovement(this.scene, this.spriteId);
-    }
+    this.enablePhysics();
+
+    this.autoMovement = new AutoMovement(this.scene, this.spriteId);
+
     this.autoMovement?.eventEmitter.on(this.spriteId, this.walkTo, this);
 
     this.stop();
@@ -56,9 +102,13 @@ class RockCockroach extends Phaser.Physics.Arcade.Sprite {
     this.scene.add.existing(this);
   }
 
-  /* get spriteId() {
-    return this.#spriteId;
-  } */
+  get spriteObjectId() {
+    return this.spriteId;
+  }
+
+  get changeDirection() {
+    return this.autoMovement.changeDirection.bind(this.autoMovement);
+  }
 
   get objectVelocity() {
     return this.spriteVelocity;
@@ -68,12 +118,15 @@ class RockCockroach extends Phaser.Physics.Arcade.Sprite {
     this.spriteVelocity = value;
   }
 
+  /**
+   * Creates animation using spriteTextureFrames object data
+   */
   #createAnimations() {
     this.scene.anims.create({
-      key: this.spriteTextureFrames?.down.key,
+      key: this.spriteTextureFrames.down.key,
       frames: this.scene.anims.generateFrameNumbers(TextureKeys.ROCK_COCKROACH, {
-        start: this.spriteTextureFrames?.down.start,
-        end: this.spriteTextureFrames?.down.end,
+        start: this.spriteTextureFrames.down.start,
+        end: this.spriteTextureFrames.down.end,
       }),
       frameRate: this.animationFrameRate,
       repeat: -1,
@@ -81,10 +134,10 @@ class RockCockroach extends Phaser.Physics.Arcade.Sprite {
     });
 
     this.scene.anims.create({
-      key: this.spriteTextureFrames?.up.key,
+      key: this.spriteTextureFrames.up.key,
       frames: this.scene.anims.generateFrameNumbers(TextureKeys.ROCK_COCKROACH, {
-        start: this.spriteTextureFrames?.up.start,
-        end: this.spriteTextureFrames?.up.end,
+        start: this.spriteTextureFrames.up.start,
+        end: this.spriteTextureFrames.up.end,
       }),
       frameRate: this.animationFrameRate,
       repeat: -1,
@@ -92,10 +145,10 @@ class RockCockroach extends Phaser.Physics.Arcade.Sprite {
     });
 
     this.scene.anims.create({
-      key: this.spriteTextureFrames?.left.key,
+      key: this.spriteTextureFrames.left.key,
       frames: this.scene.anims.generateFrameNumbers(TextureKeys.ROCK_COCKROACH, {
-        start: this.spriteTextureFrames?.left.start,
-        end: this.spriteTextureFrames?.left.end,
+        start: this.spriteTextureFrames.left.start,
+        end: this.spriteTextureFrames.left.end,
       }),
       frameRate: this.animationFrameRate,
       repeat: -1,
@@ -103,10 +156,10 @@ class RockCockroach extends Phaser.Physics.Arcade.Sprite {
     });
 
     this.scene.anims.create({
-      key: this.spriteTextureFrames?.right.key,
+      key: this.spriteTextureFrames.right.key,
       frames: this.scene.anims.generateFrameNumbers(TextureKeys.ROCK_COCKROACH, {
-        start: this.spriteTextureFrames?.right.start,
-        end: this.spriteTextureFrames?.right.end,
+        start: this.spriteTextureFrames.right.start,
+        end: this.spriteTextureFrames.right.end,
       }),
       frameRate: this.animationFrameRate,
       repeat: -1,
@@ -114,6 +167,12 @@ class RockCockroach extends Phaser.Physics.Arcade.Sprite {
     });
   }
 
+  /**
+   * Makes a spriteTextureFrames object based on key color passed on param and selecting frames
+   * from spritesheet.
+   *
+   * @param {RockCockroachColor} color - A key with color that had been selected
+   */
   #selectTexturesForAnimation(color: RockCockroachColor): void {
     switch (color) {
       case RockCockroachColor.red:
@@ -175,14 +234,24 @@ class RockCockroach extends Phaser.Physics.Arcade.Sprite {
     }
   }
 
-  #enablePhysics() {
+  /**
+   * Enables sprite physics in this Object
+   *
+   * @private
+   */
+  private enablePhysics() {
     this.scene.physics.add.existing(this);
     this.spriteBody = this.body as Phaser.Physics.Arcade.Body;
-    this.spriteBody.setSize(this.width - 6, this.height - 6);
-    this.spriteBody.setOffset(3, 3);
+    this.spriteBody.setSize(this.width - 4, this.height - 4);
+    this.spriteBody.setOffset(2, 2);
     this.spriteBody.setCollideWorldBounds(true);
   }
 
+  /**
+   * Sets body velocity in X and/or Y axis depending on direction received
+   *
+   * @param {DirectionKeys} direction - A key direction that defines direction of walfing.
+   */
   walkTo(direction: DirectionKeys) {
     switch (direction) {
       case null:

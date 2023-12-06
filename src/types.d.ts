@@ -50,9 +50,18 @@ export type RockCockroachType = 'red'
  * @description Define properties of a Stage object.
  */
 export interface StageProps {
+  stageId: number,
+  environment: EnvironmentType,
   bounds: number[][],
   floor: number[][],
   obstacles: number[][],
   enemies: number[][];
   items: number[][];
 }
+
+export type TextureFrames<T> = {
+  up: { key: T, start: number, end: number, },
+  down: { key: T, start: number, end: number, },
+  left: { key: T, start: number, end: number, },
+  right: { key: T, start: number, end: number, },
+};

@@ -28,7 +28,6 @@ class Obstacle extends Phaser.Physics.Arcade.Image {
     obstacle: ObstacleKeys,
     xPosition: number,
     yPosition: number,
-    enablePhysics? : boolean,
     tileId?: number,
   ) {
     super(
@@ -42,28 +41,11 @@ class Obstacle extends Phaser.Physics.Arcade.Image {
 
     this.#tileId = tileId;
 
-    this.#enablePhysics = enablePhysics;
-
-    this.enableObstaclePhysics();
-
     this.scene.add.existing(this);
   }
 
   get tielId() {
     return this.#tileId;
-  }
-
-  /**
-   * For enable phtsics of the obstacle
-   * @method enableObstaclePhysics
-   */
-  enableObstaclePhysics() {
-    if (this.#enablePhysics) {
-      // this.scene.physics.world.enable(this);
-      if (this.body !== null) {
-        this.body.immovable = true;
-      }
-    }
   }
 
   /**

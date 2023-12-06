@@ -7,3 +7,4 @@ export * from './RockCockroachKeys';
 export * from './SceneKeys';
 export * from './StageBoundObjectKeys';
 export * from './TextureKeys';
+export * from './PlayerKeys';

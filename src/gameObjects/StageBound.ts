@@ -14,11 +14,10 @@ class StageBoundObject extends Phaser.GameObjects.Image {
    * Construtor: Receives params for put a bound object in the scene.
    * @param {Phaser.Scene} scene - An schene where object will be putted.
    * @param {EnvironmentType} environment - A string that describes type of environment.
-   * @param {StageBoundObjectKeys} bound - string that describes Bound Object will be putted
+   * @param {StageBoundObjectKeys} bound - Key that describes Bound Object will be use to this object
    * in the scene
    * @param {number} xPosition - Position on X axis.
    * @param {number} yPosition - Position on Y axis.
-   * @param {boolean} enablePhysics? - Enable body of the object
    * @param {number} tileId? - Asign an optional Id for tile.
    */
   constructor(
@@ -40,8 +39,6 @@ class StageBoundObject extends Phaser.GameObjects.Image {
 
     this.#tileId = tileId;
 
-    // this.enableObstaclePhysics(enablePhysics ?? true);
-
     this.scene.add.existing(this);
   }
 
@@ -50,21 +47,8 @@ class StageBoundObject extends Phaser.GameObjects.Image {
   }
 
   /**
-   * For enable phtsics of the obstacle
-   * @param {bolean} enablePhysics - This indicates if physics would be enabled
-   * for this object
-   */
-  /*  enableObstaclePhysics(enablePhysics: boolean) {
-    if (enablePhysics) {
-      this.scene.physics.world.enable(this);
-      if (this.body !== null) {
-        this.body.immovable = true;
-      }
-    }
-  } */
-
-  /**
    * Selects texture to add in the bound object.
+   *
    * @param {EnvironmentType} environment - A string that describes type of environment.
    * @param {StageBoundTypes} bound - String that describes Bound Object will be putted in scene.
    * @returns {number} - Nomber of the frame selected from field-tileset.png spritesheet
