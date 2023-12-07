@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import {
-  TextureKeys, DirectionKeys, PlayerColorKeys, PlayerAnimationKey
+  TextureKeys, DirectionKeys, PlayerColorKeys, PlayerAnimationKey,
 } from '../consts';
 import { TextureFrames } from '../types';
 
@@ -51,6 +51,7 @@ export default class Player extends Phaser.GameObjects.Container {
     this.#createPlayer();
 
     this.setSize(this.#player.width, this.#player.height); // this set container Size
+    // this.createContainerBounds();
 
     this.#enablePhysicsonPlayer();
 
@@ -75,11 +76,17 @@ export default class Player extends Phaser.GameObjects.Container {
     this.#playerVelocity = value;
   }
 
+  #createPlayer() {
+    this.#player = this.scene.add.sprite(0, 0, TextureKeys.PLAYER1);
+    // this.#player.setOrigin(0);
+    this.add(this.#player);
+  }
+
   #enablePhysicsonPlayer() {
     this.scene.physics.add.existing(this);
     this.#playerBody = this.body as Phaser.Physics.Arcade.Body;
     this.#playerBody.setSize(this.#player.width - 6, this.#player.height - 9);
-    this.#playerBody.setOffset(3, 9);
+    this.#playerBody.setOffset(3, 7);
     this.#playerBody.setCollideWorldBounds(true);
   }
 
@@ -123,11 +130,6 @@ export default class Player extends Phaser.GameObjects.Container {
       frameRate: 8,
       repeat: -1,
     });
-  }
-
-  #createPlayer() {
-    this.#player = this.scene.add.sprite(0, 0, TextureKeys.PLAYER1);
-    this.add(this.#player);
   }
 
   private selectTexturesForAnimation(color: PlayerColorKeys) {
@@ -250,5 +252,20 @@ export default class Player extends Phaser.GameObjects.Container {
   stopping() {
     this.#playerBody?.setVelocity(0);
     this.#player.stop();
+  }
+
+  // For debug only
+  private createContainerBounds() {
+    const rectangle = this.scene.add.graphics();
+    const containerBounds = this.getBounds();
+
+    rectangle.lineStyle(1, 0x00ffff);
+    rectangle.strokeRect(
+      0,
+      0,
+      containerBounds.width,
+      containerBounds.height,
+    );
+    this.add(rectangle);
   }
 }

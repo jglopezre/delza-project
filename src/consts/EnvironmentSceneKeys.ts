@@ -4,4 +4,5 @@ export enum EnvironmentSceneKeys {
   forest = 'forest',
   cemetery = 'cemetery',
   cave = 'cave',
+  night = 'night',
 }

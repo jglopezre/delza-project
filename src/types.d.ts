@@ -1,3 +1,5 @@
+import { EnvironmentSceneKeys } from './consts';
+
 /**
  * @type
  * @description Type of obstacle able to use on an obstacle Object.
@@ -11,10 +13,7 @@ export type ObstacleType = 'rock'
  * @type
  * @description Type of environment able to use on an Stage.
  */
-export type EnvironmentType = 'desert'
-| 'forest'
-| 'cemetery'
-| 'cave';
+export type EnvironmentType = EnvironmentSceneKeys;
 
 /**
  * @type

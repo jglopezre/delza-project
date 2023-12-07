@@ -87,7 +87,7 @@ class StageMaker {
           return new Floor(
             this.#scene,
             this.#stageEnvironmentStyle,
-            FloorKeys.sand,
+            FloorKeys.rbcIsland,
             xPosition,
             yPosition,
             tileId,
@@ -109,7 +109,7 @@ class StageMaker {
           return new Floor(
             this.#scene,
             this.#stageEnvironmentStyle,
-            FloorKeys.sand,
+            FloorKeys.lfcIsland,
             xPosition,
             yPosition,
             tileId,
@@ -120,7 +120,7 @@ class StageMaker {
           return new Floor(
             this.#scene,
             this.#stageEnvironmentStyle,
-            FloorKeys.sand,
+            FloorKeys.rfcIsland,
             xPosition,
             yPosition,
             tileId,

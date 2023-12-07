@@ -4,6 +4,8 @@ import Player from '../gameObjects/Player';
 import KeyBoardInputs from '../inputs/KeyboardInputs';
 import StageMaker from '../stages/StageMaker';
 import RockCockroach from '../gameObjects/RockCockroach';
+import Sword from '../gameObjects/Sword';
+import { SwordColorKeys } from '../consts/SwordKeys';
 
 export default class Game extends Phaser.Scene {
   #player!: Player;
@@ -45,6 +47,8 @@ export default class Game extends Phaser.Scene {
     });
     this.physics.add.overlap(this.#player, enemiesGroup, () => console.log('enemy and player overlapping'));
     this.physics.add.collider(this.#player, worldTiles);
+
+    const sword = new Sword(this, SwordColorKeys.magical, 16 * 10, 16 * 4);
   }
 
   // _time: number, _deltaTime: number

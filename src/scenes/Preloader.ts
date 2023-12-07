@@ -20,6 +20,10 @@ export default class Preloader extends Phaser.Scene {
       frameWidth: 16,
     });
 
+    this.load.spritesheet(TextureKeys.SWORD, 'assets/sprites/sword.png', {
+      frameWidth: 16,
+    });
+
     this.load.json(JsonKeys.WORLD_FIELD, 'assets/fieldsData/worldField.json');
   }
 

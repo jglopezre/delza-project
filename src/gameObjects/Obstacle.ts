@@ -76,6 +76,11 @@ class Obstacle extends Phaser.Physics.Arcade.Image {
       case environment === EnvironmentSceneKeys.cave && obstacle === ObstacleKeys.knight: return 137;
       case environment === EnvironmentSceneKeys.cave && obstacle === ObstacleKeys.tomb: return 138;
 
+      case environment === EnvironmentSceneKeys.night && obstacle === ObstacleKeys.rock: return 216;
+      case environment === EnvironmentSceneKeys.night && obstacle === ObstacleKeys.tree: return 217;
+      case environment === EnvironmentSceneKeys.night && obstacle === ObstacleKeys.knight: return 218;
+      case environment === EnvironmentSceneKeys.night && obstacle === ObstacleKeys.tomb: return 219;
+
       default: return 0;
     }
   }

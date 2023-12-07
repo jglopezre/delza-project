@@ -2,7 +2,6 @@ export enum PlayerColorKeys {
   yellow = 'yellow',
   red = 'red',
   blue = 'blue',
-
 }
 
 export enum PlayerAnimationKey {

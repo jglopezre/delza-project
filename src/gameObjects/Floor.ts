@@ -85,6 +85,13 @@ class Floor extends Phaser.GameObjects.Image {
       case environment === EnvironmentSceneKeys.cave && floor === FloorKeys.lfcIsland: return 124;
       case environment === EnvironmentSceneKeys.cave && floor === FloorKeys.rfcIsland: return 125;
 
+      case environment === EnvironmentSceneKeys.night && floor === FloorKeys.solid: return 180;
+      case environment === EnvironmentSceneKeys.night && floor === FloorKeys.lbcIsland: return 187;
+      case environment === EnvironmentSceneKeys.night && floor === FloorKeys.rbcIsland: return 188;
+      case environment === EnvironmentSceneKeys.night && floor === FloorKeys.sand: return 198;
+      case environment === EnvironmentSceneKeys.night && floor === FloorKeys.lfcIsland: return 205;
+      case environment === EnvironmentSceneKeys.night && floor === FloorKeys.rfcIsland: return 206;
+
       default: return 0;
     }
   }

@@ -242,8 +242,8 @@ class RockCockroach extends Phaser.Physics.Arcade.Sprite {
   private enablePhysics() {
     this.scene.physics.add.existing(this);
     this.spriteBody = this.body as Phaser.Physics.Arcade.Body;
-    this.spriteBody.setSize(this.width - 4, this.height - 4);
-    this.spriteBody.setOffset(2, 2);
+    this.spriteBody.setSize(this.width - 6, this.height - 6);
+    this.spriteBody.setOffset(3, 3);
     this.spriteBody.setCollideWorldBounds(true);
   }
 

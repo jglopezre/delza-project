@@ -76,12 +76,19 @@ class StageBoundObject extends Phaser.GameObjects.Image {
       case environment === EnvironmentSceneKeys.cemetery && bound === StageBoundObjectKeys.fcRock: return 110;
       case environment === EnvironmentSceneKeys.cemetery && bound === StageBoundObjectKeys.rfcRock: return 111;
 
-      case environment === EnvironmentSceneKeys.cave && bound === StageBoundObjectKeys.lbcRock: return 99;
-      case environment === EnvironmentSceneKeys.cave && bound === StageBoundObjectKeys.bcRock: return 100;
-      case environment === EnvironmentSceneKeys.cave && bound === StageBoundObjectKeys.rbcRock: return 101;
+      case environment === EnvironmentSceneKeys.cave && bound === StageBoundObjectKeys.lbcRock: return 100;
+      case environment === EnvironmentSceneKeys.cave && bound === StageBoundObjectKeys.bcRock: return 101;
+      case environment === EnvironmentSceneKeys.cave && bound === StageBoundObjectKeys.rbcRock: return 102;
       case environment === EnvironmentSceneKeys.cave && bound === StageBoundObjectKeys.lfcRock: return 118;
       case environment === EnvironmentSceneKeys.cave && bound === StageBoundObjectKeys.fcRock: return 119;
       case environment === EnvironmentSceneKeys.cave && bound === StageBoundObjectKeys.rfcRock: return 120;
+
+      case environment === EnvironmentSceneKeys.night && bound === StageBoundObjectKeys.lbcRock: return 181;
+      case environment === EnvironmentSceneKeys.night && bound === StageBoundObjectKeys.bcRock: return 182;
+      case environment === EnvironmentSceneKeys.night && bound === StageBoundObjectKeys.rbcRock: return 183;
+      case environment === EnvironmentSceneKeys.night && bound === StageBoundObjectKeys.lfcRock: return 199;
+      case environment === EnvironmentSceneKeys.night && bound === StageBoundObjectKeys.fcRock: return 200;
+      case environment === EnvironmentSceneKeys.night && bound === StageBoundObjectKeys.rfcRock: return 201;
 
       default: return 0;
     }
