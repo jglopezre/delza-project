@@ -1,4 +1,3 @@
-export * from './DirectionKeys';
 export * from './EnvironmentSceneKeys';
 export * from './FloorKeys';
 export * from './JsonKeys';
@@ -8,3 +7,4 @@ export * from './SceneKeys';
 export * from './StageBoundObjectKeys';
 export * from './TextureKeys';
 export * from './PlayerKeys';
+export * from './SwordKeys';

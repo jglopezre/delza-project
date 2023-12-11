@@ -1,9 +1,9 @@
 import Phaser from 'phaser';
 import {
-  DirectionKeys, RockCockroachAnimationKey, RockCockroachColor, TextureKeys,
+  RockCockroachAnimationKey, RockCockroachColor, TextureKeys,
 } from '../consts';
 import AutoMovement from '../inputs/AutoMovement';
-import { TextureFrames } from '../types';
+import { DirectionKeys, TextureFrames } from '../types';
 
 /**
  * A Rock-Cockroach object for make enemies with automatic movement and Arcade Physics enabled

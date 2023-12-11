@@ -1,22 +1,21 @@
 import Phaser from 'phaser';
-import { SceneKeys, EnvironmentSceneKeys, RockCockroachColor, RockCockroachAnimationKey, PlayerColorKeys } from '../consts';
+import { SceneKeys, PlayerColorKeys } from '../consts';
 import Player from '../gameObjects/Player';
 import KeyBoardInputs from '../inputs/KeyboardInputs';
 import StageMaker from '../stages/StageMaker';
 import RockCockroach from '../gameObjects/RockCockroach';
-import Sword from '../gameObjects/Sword';
-import { SwordColorKeys } from '../consts/SwordKeys';
 
 export default class Game extends Phaser.Scene {
-  #player!: Player;
+  private player!: Player;
+
+  private actionEmitter: Phaser.Events.EventEmitter;
 
   constructor() {
     super(SceneKeys.GAME);
+    this.actionEmitter = new Phaser.Events.EventEmitter();
   }
 
   create(): void {
-    KeyBoardInputs.createPlayerInputs(this);
-
     this.physics.world.setBounds(0, 0, this.scale.width, this.scale.height - 32);
     this.physics.world.setBoundsCollision(true, true, true, true);
 
@@ -33,7 +32,7 @@ export default class Game extends Phaser.Scene {
     const enemiesGroup = this.physics.add.group();
     enemiesGroup.addMultiple(enemies);
 
-    this.#player = new Player(this, 100, 100, PlayerColorKeys.yellow);
+    this.player = new Player(this, 100, 100, PlayerColorKeys.yellow);
 
     this.physics.add.collider(enemiesGroup, enemiesGroup, (sprite1, sprite2) => {
       const enemy1 = sprite1 as RockCockroach;
@@ -45,14 +44,17 @@ export default class Game extends Phaser.Scene {
       const enemy = sprite1 as RockCockroach;
       enemy.changeDirection();
     });
-    this.physics.add.overlap(this.#player, enemiesGroup, () => console.log('enemy and player overlapping'));
-    this.physics.add.collider(this.#player, worldTiles);
+    this.physics.add.overlap(this.player, enemiesGroup, () => console.log('enemy and player overlapping'));
+    this.physics.add.collider(this.player, worldTiles);
 
-    const sword = new Sword(this, SwordColorKeys.magical, 16 * 10, 16 * 4);
+    console.log(this.player);
+    this.actionEmitter = KeyBoardInputs.createPlayerInputs(this);
+    this.actionEmitter.on('action-01', () => this.player.actions('attack'), this.player);
+    this.actionEmitter.on('action-02', this.player.actions, this.player);
   }
 
   // _time: number, _deltaTime: number
   update(): void {
-    this.#player.walking(KeyBoardInputs.PlayerMoveOnKeyboardPressing());
+    this.player.walking(KeyBoardInputs.PlayerMoveOnKeyboardPressing());
   }
 }

@@ -1,19 +1,23 @@
 import Phaser from 'phaser';
 import {
-  TextureKeys, DirectionKeys, PlayerColorKeys, PlayerAnimationKey,
+  TextureKeys, PlayerColorKeys, PlayerAnimationKey, SwordColorKeys,
 } from '../consts';
-import { TextureFrames } from '../types';
+import { TextureFrames, DirectionKeys } from '../types';
+import Sword from './Sword';
 
 /**
  * Generate a player hero in the scene
  * @class - Player
  */
 export default class Player extends Phaser.GameObjects.Container {
-  #player!: Phaser.GameObjects.Sprite;
+  private player!: Phaser.GameObjects.Sprite;
 
-  #playerBody!: Phaser.Physics.Arcade.Body;
+  private playerBody!: Phaser.Physics.Arcade.Body;
 
-  #walkToDirection: DirectionKeys = null;
+  private walkToDirection: { actual: DirectionKeys, last: DirectionKeys } = {
+    actual: null,
+    last: null,
+  };
 
   private playerTextureFrames!: TextureFrames<PlayerAnimationKey>;
 
@@ -21,13 +25,27 @@ export default class Player extends Phaser.GameObjects.Container {
 
   readonly #yOriginPosition: number;
 
+  private sword!: Sword;
+
+  private swordTweenToUp!: Phaser.Tweens.Tween;
+
+  private swordTweenToDown!: Phaser.Tweens.Tween;
+
+  private swordTweenToLeft!: Phaser.Tweens.Tween;
+
+  private swordTweenToRight!: Phaser.Tweens.Tween;
+
+  private readonly swordDeviation: { plus: number, minus: number };
+
+  private isPLayerAttacking: boolean;
+
   /**
    * Size in pixels that use player to move over the screen in each frame actualization
    * @type {number}
    */
-  #playerVelocity = 65;
+  playerVelocity = 65;
 
-  #playerVelocityDiagonal = this.#playerVelocity * 0.7;
+  playerVelocityDiagonal = this.playerVelocity * 0.7;
 
   /**
    * @param {Phaser.Scene} scene - Receives an scene where this player will belong
@@ -45,18 +63,25 @@ export default class Player extends Phaser.GameObjects.Container {
     this.#xOriginPosition = xPosition;
     this.#yOriginPosition = yPosition;
 
+    this.isPLayerAttacking = false;
+
     this.selectTexturesForAnimation(playerColor ?? PlayerColorKeys.blue);
 
     this.#createPlayerAnimations();
     this.#createPlayer();
 
-    this.setSize(this.#player.width, this.#player.height); // this set container Size
+    this.setSize(this.player.width, this.player.height); // this set container Size
     // this.createContainerBounds();
 
     this.#enablePhysicsonPlayer();
 
-    this.#player.play(this.playerTextureFrames.down.key);
-    this.#player.stop();
+    this.player.setFrame(this.playerTextureFrames.down.start);
+
+    this.createSword();
+
+    this.swordDeviation = { plus: 2, minus: -2 };
+
+    this.createSwordTweens();
 
     this.scene.add.existing(this);
   }
@@ -69,25 +94,33 @@ export default class Player extends Phaser.GameObjects.Container {
   }
 
   get stepVelocity() {
-    return this.#playerVelocity;
+    return this.playerVelocity;
   }
 
   set stepVelocity(value: number) {
-    this.#playerVelocity = value;
+    this.playerVelocity = value;
   }
 
   #createPlayer() {
-    this.#player = this.scene.add.sprite(0, 0, TextureKeys.PLAYER1);
-    // this.#player.setOrigin(0);
-    this.add(this.#player);
+    this.player = this.scene.add.sprite(0, 0, TextureKeys.PLAYER1);
+    // this.player.setOrigin(0);
+    this.add(this.player);
+  }
+
+  private createSword() {
+    this.sword = new Sword(this.scene, SwordColorKeys.normal, 0, 0);
+    this.sword.setVisible(false);
+    this.scene.physics.add.existing(this.sword);
+    this.add(this.sword);
+    this.moveDown(this.sword);
   }
 
   #enablePhysicsonPlayer() {
     this.scene.physics.add.existing(this);
-    this.#playerBody = this.body as Phaser.Physics.Arcade.Body;
-    this.#playerBody.setSize(this.#player.width - 6, this.#player.height - 9);
-    this.#playerBody.setOffset(3, 7);
-    this.#playerBody.setCollideWorldBounds(true);
+    this.playerBody = this.body as Phaser.Physics.Arcade.Body;
+    this.playerBody.setSize(this.player.width - 6, this.player.height - 9);
+    this.playerBody.setOffset(3, 7);
+    this.playerBody.setCollideWorldBounds(true);
   }
 
   #createPlayerAnimations() {
@@ -132,6 +165,57 @@ export default class Player extends Phaser.GameObjects.Container {
     });
   }
 
+  private createSwordTweens() {
+    this.swordTweenToDown = this.scene.tweens.add({
+      targets: this.sword,
+      x: this.swordDeviation.plus,
+      y: 11,
+      ease: 'quad.inout',
+      duration: 50,
+      persist: true,
+      yoyo: true,
+      hold: 100,
+      paused: true,
+      repeat: 0,
+    });
+
+    this.swordTweenToUp = this.scene.tweens.add({
+      targets: this.sword,
+      x: this.swordDeviation.minus,
+      y: -11,
+      ease: 'quad.inout',
+      duration: 50,
+      persist: true,
+      yoyo: true,
+      hold: 80,
+      paused: true,
+    });
+
+    this.swordTweenToLeft = this.scene.tweens.add({
+      targets: this.sword,
+      x: -11,
+      y: this.swordDeviation.plus,
+      ease: 'quad.inout',
+      duration: 50,
+      persist: true,
+      yoyo: true,
+      hold: 100,
+      paused: true,
+    });
+
+    this.swordTweenToRight = this.scene.tweens.add({
+      targets: this.sword,
+      x: 11,
+      y: this.swordDeviation.plus,
+      ease: 'quad.inout',
+      duration: 50,
+      persist: true,
+      yoyo: true,
+      hold: 100,
+      paused: true,
+    });
+  }
+
   private selectTexturesForAnimation(color: PlayerColorKeys) {
     switch (color) {
       case PlayerColorKeys.yellow:
@@ -171,87 +255,177 @@ export default class Player extends Phaser.GameObjects.Container {
    * @param {DirectionKeys} direction - Direction that player have to move, refreshed every frame.
    */
   walking(direction: DirectionKeys) {
-    if (direction !== this.#walkToDirection) {
-      const regex = {
-        up: /^up/,
-        down: /^down/,
-        left: /^left/,
-        right: /^right/,
-      };
+    if (!this.isPLayerAttacking) {
+      if (direction !== this.walkToDirection.actual) {
+        const regex = {
+          up: /^up/,
+          down: /^down/,
+          left: /^left/,
+          right: /^right/,
+        };
 
-      // This captures main direction of the player for to reproduces correct animation
-      if (regex.up.test(direction as string)) this.#player.play(this.playerTextureFrames.up.key);
-      else if (regex.down.test(direction as string)) this.#player.play(this.playerTextureFrames.down.key);
-      else if (regex.left.test(direction as string)) this.#player.play(this.playerTextureFrames.left.key);
-      else if (regex.right.test(direction as string)) this.#player.play(this.playerTextureFrames.right.key);
-      this.#walkToDirection = direction;
-    }
+        // This captures main direction of the player for to reproduces correct animation
+        if (regex.up.test(direction as string)) {
+          this.walkToDirection.last = direction;
+          this.player.play(this.playerTextureFrames.up.key);
+        } else if (regex.down.test(direction as string)) {
+          this.walkToDirection.last = direction;
+          this.player.play(this.playerTextureFrames.down.key);
+        } else if (regex.left.test(direction as string)) {
+          this.walkToDirection.last = direction;
+          this.player.play(this.playerTextureFrames.left.key);
+        } else if (regex.right.test(direction as string)) {
+          this.walkToDirection.last = direction;
+          this.player.play(this.playerTextureFrames.right.key);
+        }
+        this.walkToDirection.actual = direction;
+      }
 
-    switch (direction) {
-      case null:
-        this.stopping();
-        break;
+      switch (direction) {
+        case null:
+          this.stopping();
+          break;
 
-      case 'up':
-        this.#playerBody?.setVelocityX(0);
-        this.#playerBody?.setVelocityY(-this.#playerVelocity);
-        break;
-      case 'up-left':
-        this.#playerBody?.setVelocityX(-this.#playerVelocityDiagonal);
-        this.#playerBody?.setVelocityY(-this.#playerVelocityDiagonal);
-        break;
-      case 'up-right':
-        this.#playerBody?.setVelocityX(this.#playerVelocityDiagonal);
-        this.#playerBody?.setVelocityY(-this.#playerVelocityDiagonal);
-        break;
+        case 'up':
+          this.playerBody?.setVelocityX(0);
+          this.playerBody?.setVelocityY(-this.playerVelocity);
+          break;
+        case 'up-left':
+          this.playerBody?.setVelocityX(-this.playerVelocityDiagonal);
+          this.playerBody?.setVelocityY(-this.playerVelocityDiagonal);
+          break;
+        case 'up-right':
+          this.playerBody?.setVelocityX(this.playerVelocityDiagonal);
+          this.playerBody?.setVelocityY(-this.playerVelocityDiagonal);
+          break;
 
-      case 'down':
-        this.#playerBody?.setVelocityX(0);
-        this.#playerBody?.setVelocityY(this.#playerVelocity);
-        break;
-      case 'down-left':
-        this.#playerBody?.setVelocityX(-this.#playerVelocityDiagonal);
-        this.#playerBody?.setVelocityY(this.#playerVelocityDiagonal);
-        break;
-      case 'down-right':
-        this.#playerBody?.setVelocityX(this.#playerVelocityDiagonal);
-        this.#playerBody?.setVelocityY(this.#playerVelocityDiagonal);
-        break;
+        case 'down':
+          this.playerBody?.setVelocityX(0);
+          this.playerBody?.setVelocityY(this.playerVelocity);
+          break;
+        case 'down-left':
+          this.playerBody?.setVelocityX(-this.playerVelocityDiagonal);
+          this.playerBody?.setVelocityY(this.playerVelocityDiagonal);
+          break;
+        case 'down-right':
+          this.playerBody?.setVelocityX(this.playerVelocityDiagonal);
+          this.playerBody?.setVelocityY(this.playerVelocityDiagonal);
+          break;
 
-      case 'left':
-        this.#playerBody?.setVelocityX(-this.#playerVelocity);
-        this.#playerBody?.setVelocityY(0);
-        break;
-      case 'left-up':
-        this.#playerBody?.setVelocityX(-this.#playerVelocityDiagonal);
-        this.#playerBody?.setVelocityY(-this.#playerVelocityDiagonal);
-        break;
-      case 'left-down':
-        this.#playerBody?.setVelocityX(-this.#playerVelocityDiagonal);
-        this.#playerBody?.setVelocityY(this.#playerVelocityDiagonal);
-        break;
+        case 'left':
+          this.playerBody?.setVelocityX(-this.playerVelocity);
+          this.playerBody?.setVelocityY(0);
+          break;
+        case 'left-up':
+          this.playerBody?.setVelocityX(-this.playerVelocityDiagonal);
+          this.playerBody?.setVelocityY(-this.playerVelocityDiagonal);
+          break;
+        case 'left-down':
+          this.playerBody?.setVelocityX(-this.playerVelocityDiagonal);
+          this.playerBody?.setVelocityY(this.playerVelocityDiagonal);
+          break;
 
-      case 'right':
-        this.#playerBody?.setVelocityX(this.#playerVelocity);
-        this.#playerBody?.setVelocityY(0);
-        break;
-      case 'right-up':
-        this.#playerBody?.setVelocityX(this.#playerVelocityDiagonal);
-        this.#playerBody?.setVelocityY(-this.#playerVelocityDiagonal);
-        break;
-      case 'right-down':
-        this.#playerBody?.setVelocityX(this.#playerVelocityDiagonal);
-        this.#playerBody?.setVelocityY(this.#playerVelocityDiagonal);
-        break;
+        case 'right':
+          this.playerBody?.setVelocityX(this.playerVelocity);
+          this.playerBody?.setVelocityY(0);
+          break;
+        case 'right-up':
+          this.playerBody?.setVelocityX(this.playerVelocityDiagonal);
+          this.playerBody?.setVelocityY(-this.playerVelocityDiagonal);
+          break;
+        case 'right-down':
+          this.playerBody?.setVelocityX(this.playerVelocityDiagonal);
+          this.playerBody?.setVelocityY(this.playerVelocityDiagonal);
+          break;
 
-      default:
-        throw new Error('Invalid direction');
+        default:
+          throw new Error('Invalid direction');
+      }
     }
   }
 
   stopping() {
-    this.#playerBody?.setVelocity(0);
-    this.#player.stop();
+    this.playerBody?.setVelocity(0);
+    this.player.stop();
+  }
+
+  actions(action: string) {
+    switch (action) {
+      case 'attack':
+        if (this.walkToDirection.last === 'down') {
+          this.isPLayerAttacking = true;
+          this.sword.setX(this.swordDeviation.plus);
+          this.sword.setY(2);
+          this.sword.angle = 180;
+          this.sword.setVisible(true);
+          this.swordTweenToDown.play();
+          this.stopping();
+          this.player.setFrame(10);
+
+          this.swordTweenToDown.on('complete', () => {
+            this.sword.setVisible(false);
+            this.player.play(this.playerTextureFrames.down.key);
+            this.isPLayerAttacking = false;
+          });
+        } else if (this.walkToDirection.last === 'up') {
+          this.isPLayerAttacking = true;
+          this.sword.angle = 0;
+          this.sword.setX(this.swordDeviation.minus);
+          this.sword.setY(0);
+          this.sword.setVisible(true);
+          this.swordTweenToUp.play();
+          this.stopping();
+
+          this.swordTweenToUp.on('complete', () => {
+            this.sword.setVisible(false);
+            this.player.play(this.playerTextureFrames.up.key);
+            this.isPLayerAttacking = false;
+          });
+        } else if (this.walkToDirection.last === 'left') {
+          this.isPLayerAttacking = true;
+          this.sword.angle = 270;
+          this.sword.setX(0);
+          this.sword.setY(this.swordDeviation.plus);
+          this.sword.setVisible(true);
+          this.stopping();
+          this.player.setFrame(11);
+          this.swordTweenToLeft.play();
+
+          this.swordTweenToLeft.on('complete', () => {
+            this.sword.setVisible(false);
+            this.player.play(this.playerTextureFrames.left.key);
+            this.isPLayerAttacking = false;
+          });
+        } else if (this.walkToDirection.last === 'right') {
+          this.isPLayerAttacking = true;
+          this.sword.angle = 90;
+          this.sword.setX(0);
+          this.sword.setY(this.swordDeviation.plus);
+          this.sword.setVisible(true);
+          this.stopping();
+          this.swordTweenToRight.play();
+          this.player.setFrame(12);
+
+          this.swordTweenToRight.on('complete', () => {
+            this.sword.setVisible(false);
+            this.player.play(this.playerTextureFrames.right.key);
+            this.isPLayerAttacking = false;
+          });
+        }
+        break;
+
+      case 'use':
+        console.log(`${action} has been pressed`);
+        console.log(this.swordTweenToRight);
+        this.swordTweenToUp.play();
+        this.swordTweenToUp.on('complete', () => console.log('tween sword complete'));
+        break;
+      case 'cancel':
+        console.log(`${action} has been pressed`);
+        break;
+      default:
+        throw new Error('action received is invalid [class: PLayer. Method: actions()]');
+    }
   }
 
   // For debug only

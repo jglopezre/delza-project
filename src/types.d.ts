@@ -2,6 +2,23 @@ import { EnvironmentSceneKeys } from './consts';
 
 /**
  * @type
+ * @description Keywords for allowed directions in the game;
+ */
+export type DirectionKeys = 'right'
+| 'right-up' | 'right-down'
+| 'left' | 'left-up' | 'left-down'
+| 'up' | 'up-left' | 'up-right'
+| 'down' | 'down-left' | 'down-right'
+| null;
+
+/**
+ * @type
+ * @description Keywords of allowed actions in the game
+ */
+export type ActionKeys = 'attack-a' | 'attack-b';
+
+/**
+ * @type
  * @description Type of obstacle able to use on an obstacle Object.
  */
 export type ObstacleType = 'rock'
