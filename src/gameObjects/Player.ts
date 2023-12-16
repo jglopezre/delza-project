@@ -123,6 +123,10 @@ export default class Player extends Phaser.GameObjects.Container {
     this.playerBody.setCollideWorldBounds(true);
   }
 
+  get attackSword() {
+    return this.sword;
+  }
+
   #createPlayerAnimations() {
     this.scene.anims.create({
       key: this.playerTextureFrames.up.key,
@@ -356,7 +360,7 @@ export default class Player extends Phaser.GameObjects.Container {
           this.isPLayerAttacking = true;
           this.sword.setX(this.swordDeviation.plus);
           this.sword.setY(2);
-          this.sword.angle = 180;
+          this.sword.rotateSword('down');
           this.sword.setVisible(true);
           this.swordTweenToDown.play();
           this.stopping();
@@ -369,7 +373,7 @@ export default class Player extends Phaser.GameObjects.Container {
           });
         } else if (this.walkToDirection.last === 'up') {
           this.isPLayerAttacking = true;
-          this.sword.angle = 0;
+          this.sword.rotateSword('up');
           this.sword.setX(this.swordDeviation.minus);
           this.sword.setY(0);
           this.sword.setVisible(true);
@@ -383,7 +387,7 @@ export default class Player extends Phaser.GameObjects.Container {
           });
         } else if (this.walkToDirection.last === 'left') {
           this.isPLayerAttacking = true;
-          this.sword.angle = 270;
+          this.sword.rotateSword('left');
           this.sword.setX(0);
           this.sword.setY(this.swordDeviation.plus);
           this.sword.setVisible(true);
@@ -398,7 +402,7 @@ export default class Player extends Phaser.GameObjects.Container {
           });
         } else if (this.walkToDirection.last === 'right') {
           this.isPLayerAttacking = true;
-          this.sword.angle = 90;
+          this.sword.rotateSword('right');
           this.sword.setX(0);
           this.sword.setY(this.swordDeviation.plus);
           this.sword.setVisible(true);

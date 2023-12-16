@@ -45,6 +45,7 @@ export default class Game extends Phaser.Scene {
       enemy.changeDirection();
     });
     this.physics.add.overlap(this.player, enemiesGroup, () => console.log('enemy and player overlapping'));
+    this.physics.add.overlap(this.player.attackSword, enemiesGroup, (sprite1, sprite2) => sprite2.destroy());
     this.physics.add.collider(this.player, worldTiles);
 
     console.log(this.player);
