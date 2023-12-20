@@ -4,6 +4,7 @@ import Player from '../gameObjects/Player';
 import KeyBoardInputs from '../inputs/KeyboardInputs';
 import StageMaker from '../stages/StageMaker';
 import RockCockroach from '../gameObjects/RockCockroach';
+import Spark from '../gameObjects/Spark';
 
 export default class Game extends Phaser.Scene {
   private player!: Player;
@@ -45,13 +46,18 @@ export default class Game extends Phaser.Scene {
       enemy.changeDirection();
     });
     this.physics.add.overlap(this.player, enemiesGroup, () => console.log('enemy and player overlapping'));
-    this.physics.add.overlap(this.player.attackSword, enemiesGroup, (sprite1, sprite2) => sprite2.destroy());
+    this.physics.add.overlap(this.player.attackSword, enemiesGroup, (sprite1, sprite2) => {
+      const enemy = sprite2 as RockCockroach;
+      enemy.totalDisable();
+    });
     this.physics.add.collider(this.player, worldTiles);
 
-    console.log(this.player);
     this.actionEmitter = KeyBoardInputs.createPlayerInputs(this);
     this.actionEmitter.on('action-01', () => this.player.actions('attack'), this.player);
     this.actionEmitter.on('action-02', this.player.actions, this.player);
+
+    const spark = new Spark(this, 16 * 16, 6 * 16);
+    setTimeout(() => spark.playAnimation(), 2000);
   }
 
   // _time: number, _deltaTime: number

@@ -25,6 +25,14 @@ class Sword extends Phaser.Physics.Arcade.Sprite {
     this.createSwordBody();
   }
 
+  enableSwordBody() {
+    this.swordBody.setEnable();
+  }
+
+  disableSwordBody() {
+    this.swordBody.setEnable(false);
+  }
+
   private setSwordTexture(color: SwordColorKeys) {
     switch (color) {
       case SwordColorKeys.normal:
@@ -61,6 +69,7 @@ class Sword extends Phaser.Physics.Arcade.Sprite {
     this.scene.physics.add.existing(this);
     this.swordBody = this.body as Phaser.Physics.Arcade.Body;
     this.swordBody.setAllowRotation();
+    this.swordBody.setEnable(false);
   }
 
   rotateSword(angle: DirectionKeys) {

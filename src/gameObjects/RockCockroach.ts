@@ -288,6 +288,26 @@ class RockCockroach extends Phaser.Physics.Arcade.Sprite {
         throw new Error('Direction is not valid. [Class: RockCockroach, Method: walkTo]');
     }
   }
+
+  totalDisable() {
+    this.spriteBody.setEnable(false);
+    this.setActive(false);
+    this.autoMovement?.eventEmitter.off(this.spriteId, this.walkTo, this);
+    this.setVisible(false);
+  }
+
+  totalEnable(xPosition?: number, yPosition?: number) {
+    if (xPosition === undefined || yPosition === undefined) {
+      throw new Error('total enable requires 0 or 2 arguments. [Class: RockCockroach, method: totalEnable]');
+    } else if (xPosition !== undefined && yPosition !== undefined) {
+      this.setX(xPosition);
+      this.setY(yPosition);
+    }
+    this.spriteBody.setEnable();
+    this.setActive(true);
+    this.autoMovement?.eventEmitter.on(this.spriteId, this.walkTo, this);
+    this.setVisible(true);
+  }
 }
 
 export default RockCockroach;

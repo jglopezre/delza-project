@@ -387,16 +387,12 @@ class StageMaker {
     this.stageId = stage.stageId;
 
     this.#floor = stage.floor.map((row, index) => this.#assemblingFloorRow(row, index));
-    console.log(this.#floor);
 
     this.#bounds = stage.bounds.map((row, index) => this.#assemblingBoundsRow(row, index));
-    console.log(this.#bounds);
 
     this.#obstacles = stage.obstacles.map((row, index) => this.#assemblingObstacleRow(row, index));
-    console.log(this.#obstacles);
 
     this.enemies = stage.enemies.map((row, index) => this.assemblingEnemyRow(row, index));
-    console.log(this.enemies);
   }
 }
 

@@ -362,12 +362,14 @@ export default class Player extends Phaser.GameObjects.Container {
           this.sword.setY(2);
           this.sword.rotateSword('down');
           this.sword.setVisible(true);
+          this.sword.enableSwordBody();
           this.swordTweenToDown.play();
           this.stopping();
           this.player.setFrame(10);
 
           this.swordTweenToDown.on('complete', () => {
             this.sword.setVisible(false);
+            this.sword.disableSwordBody();
             this.player.play(this.playerTextureFrames.down.key);
             this.isPLayerAttacking = false;
           });
@@ -377,11 +379,13 @@ export default class Player extends Phaser.GameObjects.Container {
           this.sword.setX(this.swordDeviation.minus);
           this.sword.setY(0);
           this.sword.setVisible(true);
+          this.sword.enableSwordBody();
           this.swordTweenToUp.play();
           this.stopping();
 
           this.swordTweenToUp.on('complete', () => {
             this.sword.setVisible(false);
+            this.sword.disableSwordBody();
             this.player.play(this.playerTextureFrames.up.key);
             this.isPLayerAttacking = false;
           });
@@ -391,12 +395,14 @@ export default class Player extends Phaser.GameObjects.Container {
           this.sword.setX(0);
           this.sword.setY(this.swordDeviation.plus);
           this.sword.setVisible(true);
+          this.sword.enableSwordBody();
           this.stopping();
           this.player.setFrame(11);
           this.swordTweenToLeft.play();
 
           this.swordTweenToLeft.on('complete', () => {
             this.sword.setVisible(false);
+            this.sword.disableSwordBody();
             this.player.play(this.playerTextureFrames.left.key);
             this.isPLayerAttacking = false;
           });
@@ -406,12 +412,14 @@ export default class Player extends Phaser.GameObjects.Container {
           this.sword.setX(0);
           this.sword.setY(this.swordDeviation.plus);
           this.sword.setVisible(true);
+          this.sword.enableBody();
           this.stopping();
           this.swordTweenToRight.play();
           this.player.setFrame(12);
 
           this.swordTweenToRight.on('complete', () => {
             this.sword.setVisible(false);
+            this.sword.disableBody();
             this.player.play(this.playerTextureFrames.right.key);
             this.isPLayerAttacking = false;
           });
