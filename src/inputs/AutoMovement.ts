@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 // import RockCockroach from '../gameObjects/RockCockroach';
-import { DirectionKeys } from '../consts';
+import { DirectionKeys } from '../types';
 
 /**
  * Generates a directión parameter in ceratain random time for send to a Game Object.

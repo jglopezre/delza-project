@@ -5,4 +5,5 @@ export enum TextureKeys {
   SWORD = 'sword',
   FIELD_OBJECTS_TILES = 'field--objects-tiles',
   SPARK = 'spark',
+  PROJECTILE_ROCK = 'projectile-rock',
 }

@@ -5,6 +5,7 @@ import KeyBoardInputs from '../inputs/KeyboardInputs';
 import StageMaker from '../stages/StageMaker';
 import RockCockroach from '../gameObjects/RockCockroach';
 import Spark from '../gameObjects/Spark';
+import ProjectileRock from '../gameObjects/ProjectileRock';
 
 export default class Game extends Phaser.Scene {
   private player!: Player;
@@ -58,6 +59,9 @@ export default class Game extends Phaser.Scene {
 
     const spark = new Spark(this, 16 * 16, 6 * 16);
     setTimeout(() => spark.playAnimation(), 2000);
+
+    const projectile = new ProjectileRock(this, 16 * 14, 16 * 6);
+    projectile.playAnimation();
   }
 
   // _time: number, _deltaTime: number

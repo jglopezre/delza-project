@@ -289,6 +289,10 @@ class RockCockroach extends Phaser.Physics.Arcade.Sprite {
     }
   }
 
+  shoot() {
+    // TODO, hacer logica.
+  }
+
   totalDisable() {
     this.spriteBody.setEnable(false);
     this.setActive(false);
