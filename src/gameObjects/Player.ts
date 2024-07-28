@@ -113,6 +113,7 @@ export default class Player extends Phaser.GameObjects.Container {
     this.scene.physics.add.existing(this.sword);
     this.add(this.sword);
     this.moveDown(this.sword);
+    this.sword.disableSwordBody();
   }
 
   #enablePhysicsonPlayer() {
@@ -441,7 +442,7 @@ export default class Player extends Phaser.GameObjects.Container {
   }
 
   // For debug only
-  private createContainerBounds() {
+  /* private createContainerBounds() {
     const rectangle = this.scene.add.graphics();
     const containerBounds = this.getBounds();
 
@@ -453,5 +454,5 @@ export default class Player extends Phaser.GameObjects.Container {
       containerBounds.height,
     );
     this.add(rectangle);
-  }
+  } */
 }

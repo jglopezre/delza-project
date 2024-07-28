@@ -8,7 +8,7 @@ import { EnvironmentType, ObstacleType } from '../types';
  * @class Obstacle
  */
 class Obstacle extends Phaser.Physics.Arcade.Image {
-  #enablePhysics?: boolean;
+  // #enablePhysics?: boolean;
 
   readonly #tileId?: number;
 

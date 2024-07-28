@@ -386,7 +386,13 @@ class StageMaker {
     this.#stageEnvironmentStyle = stage.environment as EnvironmentSceneKeys;
     this.stageId = stage.stageId;
 
+    // Provitional read
+    console.log(this.stageId);
+
     this.#floor = stage.floor.map((row, index) => this.#assemblingFloorRow(row, index));
+
+    // Provitional read
+    console.log(this.#floor);
 
     this.#bounds = stage.bounds.map((row, index) => this.#assemblingBoundsRow(row, index));
 

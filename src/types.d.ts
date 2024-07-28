@@ -81,3 +81,8 @@ export type TextureFrames<T> = {
   left: { key: T, start: number, end: number, },
   right: { key: T, start: number, end: number, },
 };
+
+export type Coordinates = {
+  x: number,
+  y: number,
+};

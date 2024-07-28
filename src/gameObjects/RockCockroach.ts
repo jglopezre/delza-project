@@ -79,7 +79,9 @@ class RockCockroach extends Phaser.Physics.Arcade.Sprite {
 
     this.setOrigin(0);
 
-    this.addAutomovement = addAutoMovement ?? true;
+    this.addAutomovement = addAutoMovement ?? false;
+    // Provisional read
+    console.log(this.addAutomovement);
 
     /** Generates an id adding a key + color + uuid. */
     this.spriteId = `rock-cockroach-${color}-${Phaser.Math.RND.uuid()}`;
@@ -290,7 +292,7 @@ class RockCockroach extends Phaser.Physics.Arcade.Sprite {
   }
 
   shoot() {
-    // TODO, hacer logica.
+    // TODO:, hacer logica.
   }
 
   totalDisable() {
